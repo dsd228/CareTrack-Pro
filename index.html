@@ -2,143 +2,59 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>CareTrack-Pro</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
 </head>
 <body>
-  <header>
-    <h1>CareTrack-Pro</h1>
-    <button id="themeToggle" aria-label="Alternar tema" title="Tema claro/oscuro"></button>
+  <!-- Barra superior -->
+  <header class="topbar">
+    <div class="logo-title">
+      <img src="assets/logo.svg" alt="CareTrack-Pro Logo" class="logo" />
+      <span class="title">CareTrack-Pro</span>
+    </div>
+    <input type="search" id="searchPaciente" placeholder="Buscar paciente..." aria-label="Buscar paciente" />
+    <div class="header-actions">
+      <button id="themeToggle" title="Cambiar tema"></button>
+    </div>
   </header>
-  <div class="main-layout">
-    <nav class="sidebar" role="navigation" aria-label="Menú principal">
-      <button class="tab-btn active" data-tab="paciente">Paciente</button>
-      <button class="tab-btn" data-tab="historia">Historia Clínica</button>
-      <button class="tab-btn" data-tab="signos">Signos Vitales</button>
-      <button class="tab-btn" data-tab="examenes">Exámenes</button>
-      <button class="tab-btn" data-tab="alergias">Alergias</button>
-      <button class="tab-btn" data-tab="notas">Notas</button>
-      <button class="tab-btn" data-tab="educacion">Educación</button>
+  <!-- Layout principal -->
+  <div class="dashboard-layout">
+    <!-- Menú lateral -->
+    <nav class="sidebar" aria-label="Menú principal">
+      <button class="menu-btn active" data-tab="paciente">
+        <img src="assets/user.svg" alt="" class="icon" /> <span>Paciente</span>
+      </button>
+      <button class="menu-btn" data-tab="historia">
+        <img src="assets/history.svg" alt="" class="icon" /> <span>Historia Clínica</span>
+      </button>
+      <button class="menu-btn" data-tab="signos">
+        <img src="assets/vitals.svg" alt="" class="icon" /> <span>Signos Vitales</span>
+      </button>
+      <button class="menu-btn" data-tab="examenes">
+        <img src="assets/lab.svg" alt="" class="icon" /> <span>Exámenes</span>
+      </button>
+      <button class="menu-btn" data-tab="alergias">
+        <img src="assets/allergy.svg" alt="" class="icon" /> <span>Alergias</span>
+      </button>
+      <button class="menu-btn" data-tab="notas">
+        <img src="assets/notes.svg" alt="" class="icon" /> <span>Notas</span>
+      </button>
+      <button class="menu-btn" data-tab="educacion">
+        <img src="assets/education.svg" alt="" class="icon" /> <span>Educación</span>
+      </button>
+      <button class="menu-btn" data-tab="configuracion">
+        <img src="assets/settings.svg" alt="" class="icon" /> <span>Configuración</span>
+      </button>
     </nav>
-    <main>
-      <!-- Paciente -->
-      <section id="tab-paciente" class="tab-panel active">
-        <h2>Datos del Paciente</h2>
-        <form id="pacienteForm" autocomplete="off">
-          <label>
-            Nombre:
-            <input type="text" id="pacienteNombre" required>
-          </label>
-          <label>
-            Edad:
-            <input type="number" id="pacienteEdad" min="0" max="120" required>
-          </label>
-          <label>
-            Sexo:
-            <select id="pacienteSexo" required>
-              <option value="">Seleccione</option>
-              <option value="Femenino">Femenino</option>
-              <option value="Masculino">Masculino</option>
-              <option value="Otro">Otro</option>
-            </select>
-          </label>
-          <label>
-            Contacto:
-            <input type="text" id="pacienteContacto">
-          </label>
-          <button type="submit">Guardar Paciente</button>
-        </form>
-      </section>
-      <!-- Historia Clínica -->
-      <section id="tab-historia" class="tab-panel">
-        <h2>Historia Clínica</h2>
-        <form id="historiaForm">
-          <label>
-            Antecedentes Médicos:
-            <textarea id="antecedentes" rows="5"></textarea>
-          </label>
-          <button type="submit">Guardar Historia</button>
-        </form>
-      </section>
-      <!-- Signos Vitales -->
-      <section id="tab-signos" class="tab-panel">
-        <h2>Signos Vitales</h2>
-        <form id="signosForm">
-          <label>
-            Temperatura (°C):
-            <input type="number" id="temperatura" step="0.1" min="30" max="45">
-          </label>
-          <label>
-            Presión Arterial:
-            <input type="text" id="presion" placeholder="Ej: 120/80">
-          </label>
-          <label>
-            Frecuencia Cardíaca (lpm):
-            <input type="number" id="fc" min="20" max="220">
-          </label>
-          <label>
-            Peso (kg):
-            <input type="number" id="peso" step="0.1" min="2" max="300">
-          </label>
-          <button type="submit">Guardar Signos</button>
-        </form>
-      </section>
-      <!-- Exámenes -->
-      <section id="tab-examenes" class="tab-panel">
-        <h2>Exámenes Realizados</h2>
-        <form id="examenForm">
-          <label>
-            Nombre del Estudio:
-            <input type="text" id="examenNombre">
-          </label>
-          <label>
-            Resultado:
-            <input type="text" id="examenResultado">
-          </label>
-          <button type="button" id="agregarExamen">Agregar Examen</button>
-        </form>
-        <ul id="examenesLista"></ul>
-      </section>
-      <!-- Alergias -->
-      <section id="tab-alergias" class="tab-panel">
-        <h2>Alergias</h2>
-        <form id="alergiaForm">
-          <label>
-            Nueva Alergia:
-            <input type="text" id="alergiaInput">
-          </label>
-          <button type="button" id="agregarAlergia">Agregar</button>
-        </form>
-        <ul id="alergiasLista"></ul>
-      </section>
-      <!-- Notas -->
-      <section id="tab-notas" class="tab-panel">
-        <h2>Notas Médicas</h2>
-        <form id="notasForm">
-          <label>
-            Observaciones:
-            <textarea id="notasText" rows="8"></textarea>
-          </label>
-          <button type="submit">Guardar Nota</button>
-        </form>
-      </section>
-      <!-- Educación -->
-      <section id="tab-educacion" class="tab-panel">
-        <h2>Educación para el Paciente</h2>
-        <form id="busquedaForm">
-          <label>
-            Buscar medicamento, síntoma o enfermedad:
-            <input type="text" id="busquedaInput" placeholder="Ej: ibuprofeno, fiebre">
-          </label>
-          <button type="submit">Buscar</button>
-        </form>
-        <div id="busquedaResultado"></div>
-      </section>
+    <!-- Contenido principal SPA -->
+    <main id="main-content">
+      <!-- Paneles SPA: se llenan dinámicamente en JS -->
     </main>
   </div>
   <footer>
-    <small>&copy; 2025 CareTrack-Pro</small>
+    <small>CareTrack-Pro &copy; 2025 · GitHub Pages Ready</small>
   </footer>
   <script src="script.js"></script>
 </body>
