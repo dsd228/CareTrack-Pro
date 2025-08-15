@@ -4,13 +4,12 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBW0QcJ5jCCx52l9qfYPTj5lUHp1TjlSpA",
-  authDomain: "caretrackweb.firebaseapp.com",
-  projectId: "caretrackweb",
-  storageBucket: "caretrackweb.appspot.com", // <-- CORREGIDO!
-  messagingSenderId: "31200607142",
-  appId: "1:31200607142:web:c4902c1a4a1b30d962ad67",
-  measurementId: "G-0G8GHGHF7Y"
+  apiKey: "TU_API_KEY",
+  authDomain: "TU_PROJECT.firebaseapp.com",
+  projectId: "TU_PROJECT_ID",
+  storageBucket: "TU_PROJECT.appspot.com",
+  messagingSenderId: "TU_SENDER_ID",
+  appId: "TU_APP_ID"
 };
 
 export const app = initializeApp(firebaseConfig);
