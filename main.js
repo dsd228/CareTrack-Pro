@@ -66,8 +66,5 @@ onUserChange(user => {
 
 initAuth().then(user => {
   showPanel(currentTab);
-  export function setupRealtimeNotifications(userId, cb) {
-  // Implementación pendiente. Llama al callback como ejemplo.
-  // cb({ text: "Notificaciones en tiempo real no implementadas aún." });
-}
+
 });
