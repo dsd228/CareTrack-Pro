@@ -2,11 +2,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
+// Configuración de tu proyecto Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBW0QcJ5jCCx52l9qfYPTj5lUHp1TjlSpA",
   authDomain: "caretrackweb.firebaseapp.com",
   projectId: "caretrackweb",
-  storageBucket: "caretrackweb.appspot.com", // corregido!
+  storageBucket: "caretrackweb.appspot.com",
   messagingSenderId: "31200607142",
   appId: "1:31200607142:web:c4902c1a4a1b30d962ad67",
   measurementId: "G-0G8GHGHF7Y"
