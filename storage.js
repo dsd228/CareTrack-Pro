@@ -1,6 +1,4 @@
-// storage.js
 const PREFIX = 'paciente_';
-
 export function savePacienteField(field, value) {
   localStorage.setItem(PREFIX + field, value);
 }
