@@ -15,7 +15,6 @@ export function panelConfiguracion() {
   </section>
   `;
 }
-
 export function panelConfiguracionInit() {
   document.getElementById('configuracion_limpiar').onclick = () => {
     document.getElementById('configuracion_tema').value = 'claro';
