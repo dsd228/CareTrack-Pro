@@ -1,8 +1,97 @@
 // CareTrack-Pro SPA avanzado JS
+// Mejora de UI/UX, SPA, validaciones, multilenguaje, notificaciones, exportación
 
-// --------- Gestión de Tema ---------
+// ------------- SPA y layout -------------
 const themeToggle = document.getElementById('themeToggle');
+const langToggle = document.getElementById('langToggle');
 const root = document.documentElement;
+const sidebar = document.querySelector('.sidebar');
+const hamburger = document.querySelector('.hamburger');
+let currentTab = "paciente";
+
+// ----- Multilenguaje -----
+const LANG = {
+  es: {
+    guardar: "Guardar",
+    buscar: "Buscar paciente...",
+    registro: "Registrar",
+    nombre: "Nombre",
+    edad: "Edad",
+    genero: "Género",
+    contacto: "Contacto",
+    direccion: "Dirección",
+    foto: "Foto",
+    paciente: "Paciente",
+    historia: "Historia Clínica",
+    signos: "Signos Vitales",
+    examenes: "Exámenes",
+    alergias: "Alergias",
+    notas: "Notas",
+    educacion: "Educación",
+    configuracion: "Configuración",
+    agregar: "Agregar",
+    eliminar: "Eliminar",
+    exportar: "Exportar",
+    pdf: "PDF",
+    csv: "CSV",
+    idioma: "Idioma",
+    fuenteGrande: "Fuente grande",
+    altoContraste: "Alto contraste",
+    datosGuardados: "Datos guardados",
+    pacienteActualizado: "Paciente actualizado",
+    error: "Error",
+    exportacionExitosa: "Exportación exitosa",
+    toastGuardado: "Datos guardados exitosamente",
+    toastEliminado: "Elemento eliminado",
+    toastActualizado: "Elemento actualizado",
+  },
+  en: {
+    guardar: "Save",
+    buscar: "Search patient...",
+    registro: "Register",
+    nombre: "Name",
+    edad: "Age",
+    genero: "Gender",
+    contacto: "Contact",
+    direccion: "Address",
+    foto: "Photo",
+    paciente: "Patient",
+    historia: "Clinical History",
+    signos: "Vitals",
+    examenes: "Tests",
+    alergias: "Allergies",
+    notas: "Notes",
+    educacion: "Education",
+    configuracion: "Settings",
+    agregar: "Add",
+    eliminar: "Delete",
+    exportar: "Export",
+    pdf: "PDF",
+    csv: "CSV",
+    idioma: "Language",
+    fuenteGrande: "Large font",
+    altoContraste: "High contrast",
+    datosGuardados: "Data saved",
+    pacienteActualizado: "Patient updated",
+    error: "Error",
+    exportacionExitosa: "Export successful",
+    toastGuardado: "Data saved successfully",
+    toastEliminado: "Item deleted",
+    toastActualizado: "Item updated",
+  }
+};
+let idioma = localStorage.getItem('ctp_idioma') || 'es';
+function t(key) { return LANG[idioma][key] || key; }
+langToggle.textContent = idioma.toUpperCase();
+langToggle.onclick = () => {
+  idioma = idioma === 'es' ? 'en' : 'es';
+  localStorage.setItem('ctp_idioma', idioma);
+  langToggle.textContent = idioma.toUpperCase();
+  showPanel(currentTab);
+  showToast(t("datosGuardados"));
+};
+
+// ----- Tema con transición -----
 function setTheme(theme) {
   root.setAttribute('data-theme', theme);
   localStorage.setItem('ctp_theme', theme);
@@ -14,10 +103,55 @@ themeToggle.addEventListener('click', () => {
   setTheme(root.getAttribute('data-theme') === "dark" ? "light" : "dark");
 });
 
-// --------- SPA Navegación Paneles ---------
+// ----- Sidebar menu responsive -----
+hamburger.addEventListener('click', () => {
+  sidebar.classList.toggle('collapsed');
+});
+sidebar.addEventListener('mouseenter', () => {
+  if(window.innerWidth < 700) sidebar.classList.remove('collapsed');
+});
+sidebar.addEventListener('mouseleave', () => {
+  if(window.innerWidth < 700) sidebar.classList.add('collapsed');
+});
+window.addEventListener('resize', () => {
+  if(window.innerWidth < 700) sidebar.classList.add('collapsed');
+  else sidebar.classList.remove('collapsed');
+});
+if(window.innerWidth < 700) sidebar.classList.add('collapsed');
+
+// SPA navigation
 const menuBtns = document.querySelectorAll('.menu-btn');
 const mainContent = document.getElementById('main-content');
-let currentTab = "paciente";
+menuBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    menuBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    showPanel(btn.dataset.tab);
+    currentTab = btn.dataset.tab;
+  });
+});
+window.onpopstate = (e) => {
+  if(e.state?.tab) showPanel(e.state.tab);
+};
+
+// ------------- Toast notifications -------------
+function showToast(msg, isError=false) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = "toast" + (isError ? " error":"") + " show";
+  setTimeout(() => toast.classList.remove('show'), 2300);
+}
+
+// ------------- Atajos de teclado -------------
+document.addEventListener('keydown', e => {
+  if(e.ctrlKey && e.key === 'f') {
+    document.getElementById('searchPaciente').focus();
+    e.preventDefault();
+  }
+  if(e.altKey && e.key === '1') showPanel('historia');
+});
+
+// ------------- Paneles SPA -------------
 const panels = {
   paciente: renderPacientePanel,
   historia: renderHistoriaPanel,
@@ -28,55 +162,53 @@ const panels = {
   educacion: renderEducacionPanel,
   configuracion: renderConfigPanel
 };
-menuBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    menuBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    showPanel(btn.dataset.tab);
-  });
-});
 function showPanel(tab) {
   currentTab = tab;
   mainContent.innerHTML = `<div class="spa-panel active">${panels[tab]()}</div>`;
   setTimeout(() => { panelInit[tab]?.(); }, 30);
+  history.pushState({tab}, '', `#${tab}`);
 }
 showPanel(currentTab);
 
-// --------- Paneles HTML ---------
+// ------------- Paneles HTML -------------
 function renderPacientePanel() {
   return `
-    <h2>Pacientes</h2>
-    <form id="formPaciente" class="panel-form">
+    <div class="card">
+    <h2>${t("paciente")}</h2>
+    <form id="formPaciente" class="panel-form" autocomplete="off">
       <div class="form-row">
-        <label>Nombre: <input type="text" id="pNombre" required /></label>
-        <label>Edad: <input type="number" id="pEdad" min="0" max="120" required /></label>
-        <label>Género:
+        <label>${t("nombre")}: <input type="text" id="pNombre" required /></label>
+        <label>${t("edad")}: <input type="number" id="pEdad" min="0" max="120" required /></label>
+        <label>${t("genero")}:
           <select id="pGenero">
-            <option value="">Seleccione</option>
-            <option value="Femenino">Femenino</option>
-            <option value="Masculino">Masculino</option>
-            <option value="Otro">Otro</option>
+            <option value="">${t("genero")}</option>
+            <option value="Femenino">${idioma==='es'?"Femenino":"Female"}</option>
+            <option value="Masculino">${idioma==='es'?"Masculino":"Male"}</option>
+            <option value="Otro">${idioma==='es'?"Otro":"Other"}</option>
           </select>
         </label>
       </div>
       <div class="form-row">
-        <label>Contacto: <input type="text" id="pContacto" /></label>
-        <label>Dirección: <input type="text" id="pDireccion" /></label>
-        <label>Foto: <input type="file" id="pFoto" accept="image/*" /></label>
+        <label>${t("contacto")}: <input type="text" id="pContacto" /></label>
+        <label>${t("direccion")}: <input type="text" id="pDireccion" /></label>
+        <label>${t("foto")}: <input type="file" id="pFoto" accept="image/*" /></label>
       </div>
-      <button type="submit">Registrar</button>
+      <button type="submit">${t("registro")}</button>
+      <button type="button" id="exportCSV">${t("exportar")} ${t("csv")}</button>
+      <button type="button" id="exportPDF">${t("exportar")} ${t("pdf")}</button>
     </form>
     <div id="pacientesList"></div>
+    </div>
   `;
 }
 function renderPacienteItem(paciente, idx) {
   return `
-    <div class="paciente-card" data-idx="${idx}">
+    <div class="paciente-card neumorph" data-idx="${idx}">
       <img src="${paciente.foto || 'assets/user.svg'}" alt="Foto" class="paciente-foto" />
       <div class="paciente-info">
-        <strong>${paciente.nombre}</strong> (${paciente.edad} años, ${paciente.genero})<br>
-        ${paciente.contacto ? `<span>Contacto: ${paciente.contacto}</span><br>` : ""}
-        ${paciente.direccion ? `<span>Dirección: ${paciente.direccion}</span><br>` : ""}
+        <strong>${paciente.nombre}</strong> (${paciente.edad} ${idioma==='es'?'años':'years'}, ${paciente.genero})<br>
+        ${paciente.contacto ? `<span>${t("contacto")}: ${paciente.contacto}</span><br>` : ""}
+        ${paciente.direccion ? `<span>${t("direccion")}: ${paciente.direccion}</span><br>` : ""}
       </div>
       <div class="paciente-actions">
         <button class="edit-paciente" title="Editar">&#9998;</button>
@@ -87,116 +219,130 @@ function renderPacienteItem(paciente, idx) {
 }
 function renderHistoriaPanel() {
   return `
-    <h2>Historia Clínica</h2>
-    <form id="formHistoria" class="panel-form">
-      <label>Fecha: <input type="date" id="hFecha" required /></label>
-      <label>Antecedentes / Diagnóstico:
-        <textarea id="hTexto" rows="3"></textarea>
+    <div class="card">
+    <h2>${t("historia")}</h2>
+    <form id="formHistoria" class="panel-form" autocomplete="off">
+      <label>${idioma==='es'?"Fecha":"Date"}: <input type="date" id="hFecha" required /></label>
+      <label>${idioma==='es'?"Antecedentes / Diagnóstico":"Medical history / Diagnosis"}:
+        <textarea id="hTexto" rows="3" required></textarea>
       </label>
-      <label>Documento/Imagen (URL): <input type="url" id="hURL" placeholder="https://..." /></label>
-      <button type="submit">Agregar</button>
+      <label>${idioma==='es'?"Documento/Imagen (URL)":"Document/Image (URL)"}: <input type="url" id="hURL" placeholder="https://..." /></label>
+      <button type="submit">${t("agregar")}</button>
     </form>
     <div id="historiaList"></div>
+    </div>
   `;
 }
 function renderSignosPanel() {
   return `
-    <h2>Signos Vitales</h2>
-    <form id="formSignos" class="panel-form">
+    <div class="card">
+    <h2>${t("signos")}</h2>
+    <form id="formSignos" class="panel-form" autocomplete="off">
       <div class="form-row">
-        <label>Temperatura (°C): <input type="number" id="sTemp" step="0.1" min="30" max="45" /></label>
-        <label>Presión Arterial: <input type="text" id="sPresion" placeholder="Ej: 120/80" /></label>
-        <label>Frecuencia Cardíaca: <input type="number" id="sFC" min="30" max="220" /></label>
+        <label>${idioma==='es'?"Temperatura (°C)":"Temperature (°C)"}: <input type="number" id="sTemp" step="0.1" min="30" max="45" required /></label>
+        <label>${idioma==='es'?"Presión Arterial":"Blood Pressure"}: <input type="text" id="sPresion" placeholder="Ej: 120/80" required /></label>
+        <label>${idioma==='es'?"Frecuencia Cardíaca":"Heart Rate"}: <input type="number" id="sFC" min="30" max="220" required /></label>
       </div>
       <div class="form-row">
-        <label>Saturación O₂ (%): <input type="number" id="sSatO2" min="50" max="100" /></label>
-        <label>Peso (kg): <input type="number" id="sPeso" step="0.1" min="2" max="300" /></label>
-        <label>Altura (cm): <input type="number" id="sAltura" min="30" max="250" /></label>
+        <label>${idioma==='es'?"Saturación O₂ (%)":"O₂ Saturation (%)"}: <input type="number" id="sSatO2" min="50" max="100" required /></label>
+        <label>${idioma==='es'?"Peso (kg)":"Weight (kg)"}: <input type="number" id="sPeso" step="0.1" min="2" max="300" required /></label>
+        <label>${idioma==='es'?"Altura (cm)":"Height (cm)"}: <input type="number" id="sAltura" min="30" max="250" required /></label>
       </div>
-      <button type="submit">Registrar</button>
+      <button type="submit">${t("agregar")}</button>
     </form>
-    <canvas id="chartSignos" width="400" height="180"></canvas>
+    <canvas id="chartSignos" width="400" height="180" aria-label="Gráfico de signos vitales"></canvas>
     <div id="signosList"></div>
+    </div>
   `;
 }
 function renderExamenesPanel() {
   return `
-    <h2>Exámenes</h2>
-    <form id="formExamen" class="panel-form">
-      <label>Fecha: <input type="date" id="eFecha" required /></label>
-      <label>Tipo: <input type="text" id="eTipo" required /></label>
-      <label>Resultado: <input type="text" id="eResultado" /></label>
-      <label>Enlace a Resultados: <input type="url" id="eURL" placeholder="https://..." /></label>
-      <button type="submit">Agregar</button>
+    <div class="card">
+    <h2>${t("examenes")}</h2>
+    <form id="formExamen" class="panel-form" autocomplete="off">
+      <label>${idioma==='es'?"Fecha":"Date"}: <input type="date" id="eFecha" required /></label>
+      <label>${idioma==='es'?"Tipo":"Type"}: <input type="text" id="eTipo" required /></label>
+      <label>${idioma==='es'?"Resultado":"Result"}: <input type="text" id="eResultado" /></label>
+      <label>${idioma==='es'?"Enlace a Resultados":"Results Link"}: <input type="url" id="eURL" placeholder="https://..." /></label>
+      <button type="submit">${t("agregar")}</button>
     </form>
     <div id="examenList"></div>
+    </div>
   `;
 }
 function renderAlergiasPanel() {
   return `
-    <h2>Alergias</h2>
-    <form id="formAlergia" class="panel-form">
-      <label>Tipo: <input type="text" id="aTipo" required /></label>
-      <label>Gravedad:
-        <select id="aGravedad">
-          <option value="">Seleccione</option>
-          <option value="Leve">Leve</option>
-          <option value="Moderada">Moderada</option>
-          <option value="Grave">Grave</option>
+    <div class="card">
+    <h2>${t("alergias")}</h2>
+    <form id="formAlergia" class="panel-form" autocomplete="off">
+      <label>${idioma==='es'?"Tipo":"Type"}: <input type="text" id="aTipo" required /></label>
+      <label>${idioma==='es'?"Gravedad":"Severity"}:
+        <select id="aGravedad" required>
+          <option value="">${idioma==='es'?"Seleccione":"Select"}</option>
+          <option value="Leve">${idioma==='es'?"Leve":"Mild"}</option>
+          <option value="Moderada">${idioma==='es'?"Moderada":"Moderate"}</option>
+          <option value="Grave">${idioma==='es'?"Grave":"Severe"}</option>
         </select>
       </label>
-      <label>Reacción: <input type="text" id="aReaccion" /></label>
-      <button type="submit">Agregar</button>
+      <label>${idioma==='es'?"Reacción":"Reaction"}: <input type="text" id="aReaccion" /></label>
+      <button type="submit">${t("agregar")}</button>
     </form>
     <div id="alergiaList"></div>
+    </div>
   `;
 }
 function renderNotasPanel() {
   return `
-    <h2>Notas Médicas</h2>
-    <form id="formNota" class="panel-form">
+    <div class="card">
+    <h2>${t("notas")}</h2>
+    <form id="formNota" class="panel-form" autocomplete="off">
       <div id="notaEditor">
         <button type="button" class="nota-bt" data-cmd="bold"><b>B</b></button>
         <button type="button" class="nota-bt" data-cmd="italic"><i>I</i></button>
         <button type="button" class="nota-bt" data-cmd="insertUnorderedList">&#8226; Lista</button>
         <button type="button" class="nota-bt" id="imgInsertBtn">&#128247; Imagen</button>
       </div>
-      <div contenteditable="true" id="notaContent" class="nota-content"></div>
-      <button type="submit">Guardar Nota</button>
+      <div contenteditable="true" id="notaContent" class="nota-content" aria-label="Editor enriquecido"></div>
+      <button type="submit">${t("guardar")}</button>
     </form>
     <div id="notasList"></div>
+    </div>
   `;
 }
 function renderEducacionPanel() {
   return `
-    <h2>Educación</h2>
-    <form id="formEducacion" class="panel-form">
-      <label>Búsqueda web:
-        <input type="search" id="eduQuery" placeholder="Ej: fiebre, ibuprofeno..." />
+    <div class="card">
+    <h2>${t("educacion")}</h2>
+    <form id="formEducacion" class="panel-form" autocomplete="off">
+      <label>${idioma==='es'?"Búsqueda web":"Web search"}:
+        <input type="search" id="eduQuery" placeholder="${idioma==='es'?"Ej: fiebre, ibuprofeno...":"Ex: fever, ibuprofen..."}" />
       </label>
-      <button type="submit">Buscar</button>
+      <button type="submit">${t("buscar")}</button>
     </form>
     <div id="eduResultado"></div>
+    </div>
   `;
 }
 function renderConfigPanel() {
   return `
-    <h2>Configuración</h2>
-    <form id="formConfig" class="panel-form">
-      <label>Cambio de idioma:
+    <div class="card">
+    <h2>${t("configuracion")}</h2>
+    <form id="formConfig" class="panel-form" autocomplete="off">
+      <label>${t("idioma")}: 
         <select id="cfgIdioma">
           <option value="es">Español</option>
           <option value="en">English</option>
         </select>
       </label>
-      <label><input type="checkbox" id="cfgFuenteGrande" /> Fuente grande</label>
-      <label><input type="checkbox" id="cfgAltoContraste" /> Alto contraste</label>
-      <button type="submit">Guardar Configuración</button>
+      <label><input type="checkbox" id="cfgFuenteGrande" /> ${t("fuenteGrande")}</label>
+      <label><input type="checkbox" id="cfgAltoContraste" /> ${t("altoContraste")}</label>
+      <button type="submit">${t("guardar")}</button>
     </form>
+    </div>
   `;
 }
 
-// --------- Inicialización lógica por panel ---------
+// ------------- Paneles lógicos y validaciones -------------
 const panelInit = {
   paciente: initPacientePanel,
   historia: initHistoriaPanel,
@@ -208,7 +354,13 @@ const panelInit = {
   configuracion: initConfigPanel
 };
 
-// --------- Pacientes ---------
+// ---- Pacientes ----
+function getPacientes() {
+  return JSON.parse(localStorage.getItem('ctp_pacientes') || "[]");
+}
+function setPacientes(arr) {
+  localStorage.setItem('ctp_pacientes', JSON.stringify(arr));
+}
 function initPacientePanel() {
   const form = document.getElementById('formPaciente');
   const fotoInput = document.getElementById('pFoto');
@@ -223,6 +375,7 @@ function initPacientePanel() {
   });
   form.onsubmit = e => {
     e.preventDefault();
+    if(form.pNombre.value.length < 2) return showToast("Nombre requerido",true);
     const paciente = {
       nombre: form.pNombre.value,
       edad: form.pEdad.value,
@@ -231,16 +384,28 @@ function initPacientePanel() {
       direccion: form.pDireccion.value,
       foto: fotoBase64
     };
-    const pacientes = JSON.parse(localStorage.getItem('ctp_pacientes') || "[]");
+    const pacientes = getPacientes();
     pacientes.push(paciente);
-    localStorage.setItem('ctp_pacientes', JSON.stringify(pacientes));
+    setPacientes(pacientes);
     renderPacientes();
     form.reset();
     fotoBase64 = "";
+    showToast(t("toastGuardado"));
   };
+  document.getElementById('exportCSV').onclick = () => exportCSV(getPacientes());
+  document.getElementById('exportPDF').onclick = () => exportPDF(getPacientes());
   renderPacientes();
+
   function renderPacientes(filter = "") {
-    const pacientes = JSON.parse(localStorage.getItem('ctp_pacientes') || "[]");
+    const pacientes = getPacientes();
+    // Autocomplete datalist
+    const datalist = document.getElementById('autocomplete-list');
+    datalist.innerHTML = "";
+    pacientes.forEach(p => {
+      const option = document.createElement('option');
+      option.value = p.nombre;
+      datalist.appendChild(option);
+    });
     let html = '<div class="pacientes-list">';
     pacientes
       .map((p, i) => ({p, i}))
@@ -255,7 +420,7 @@ function initPacientePanel() {
   }
   function editPaciente(btn) {
     const idx = btn.closest('.paciente-card').dataset.idx;
-    const pacientes = JSON.parse(localStorage.getItem('ctp_pacientes') || "[]");
+    const pacientes = getPacientes();
     const p = pacientes[idx];
     form.pNombre.value = p.nombre;
     form.pEdad.value = p.edad;
@@ -264,16 +429,18 @@ function initPacientePanel() {
     form.pDireccion.value = p.direccion;
     fotoBase64 = p.foto || "";
     pacientes.splice(idx,1);
-    localStorage.setItem('ctp_pacientes', JSON.stringify(pacientes));
+    setPacientes(pacientes);
     renderPacientes();
+    showToast(t("pacienteActualizado"));
   }
   function deletePaciente(btn) {
     const idx = btn.closest('.paciente-card').dataset.idx;
-    const pacientes = JSON.parse(localStorage.getItem('ctp_pacientes') || "[]");
-    if (confirm("¿Eliminar paciente?")) {
+    const pacientes = getPacientes();
+    if (confirm(t("eliminar")+"?")) {
       pacientes.splice(idx,1);
-      localStorage.setItem('ctp_pacientes', JSON.stringify(pacientes));
+      setPacientes(pacientes);
       renderPacientes();
+      showToast(t("toastEliminado"));
     }
   }
   document.getElementById('searchPaciente').oninput = function() {
@@ -281,11 +448,37 @@ function initPacientePanel() {
   };
 }
 
-// --------- Historia Clínica ---------
+// ---- Exportación CSV/PDF ----
+function exportCSV(arr) {
+  let csv = "Nombre,Edad,Género,Contacto,Dirección\n";
+  arr.forEach(p => {
+    csv += `${p.nombre},${p.edad},${p.genero},${p.contacto},${p.direccion}\n`;
+  });
+  const blob = new Blob([csv], {type:"text/csv"});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = "pacientes.csv";
+  a.click();
+  showToast(t("exportacionExitosa"));
+}
+function exportPDF(arr) {
+  const doc = new window.jspdf.jsPDF();
+  doc.text("Listado de Pacientes",10,10);
+  let y = 18;
+  arr.forEach(p => {
+    doc.text(`${p.nombre} | ${p.edad} | ${p.genero} | ${p.contacto} | ${p.direccion}`,10,y);
+    y += 8;
+  });
+  doc.save("pacientes.pdf");
+  showToast(t("exportacionExitosa"));
+}
+
+// ---- Historia clínica ----
 function initHistoriaPanel() {
   const form = document.getElementById('formHistoria');
   form.onsubmit = e => {
     e.preventDefault();
+    if(form.hTexto.value.length < 3) return showToast("Campo requerido",true);
     const historia = {
       fecha: form.hFecha.value,
       texto: form.hTexto.value,
@@ -296,6 +489,7 @@ function initHistoriaPanel() {
     localStorage.setItem('ctp_historia', JSON.stringify(historias));
     renderHistorias();
     form.reset();
+    showToast(t("toastGuardado"));
   };
   renderHistorias();
   function renderHistorias() {
@@ -304,7 +498,7 @@ function initHistoriaPanel() {
     historias.forEach((h, i) => {
       html += `<li>
         <strong>${h.fecha}</strong>: ${h.texto}
-        ${h.url ? ` <a href="${h.url}" target="_blank">[Ver documento]</a>` : ""}
+        ${h.url ? ` <a href="${h.url}" target="_blank">[${idioma==='es'?"Ver documento":"See document"}]</a>` : ""}
         <button class="delete-historia" data-idx="${i}">&times;</button>
       </li>`;
     });
@@ -315,11 +509,12 @@ function initHistoriaPanel() {
       historias.splice(idx,1);
       localStorage.setItem('ctp_historia', JSON.stringify(historias));
       renderHistorias();
+      showToast(t("toastEliminado"));
     });
   }
 }
 
-// --------- Signos Vitales ---------
+// ---- Signos vitales ----
 function initSignosPanel() {
   const form = document.getElementById('formSignos');
   form.onsubmit = e => {
@@ -338,6 +533,7 @@ function initSignosPanel() {
     localStorage.setItem('ctp_signos', JSON.stringify(signos));
     renderSignos();
     form.reset();
+    showToast(t("toastGuardado"));
   };
   renderSignos();
   function renderSignos() {
@@ -362,6 +558,7 @@ function initSignosPanel() {
       localStorage.setItem('ctp_signos', JSON.stringify(signos));
       renderSignos();
       drawChart();
+      showToast(t("toastEliminado"));
     });
     drawChart();
   }
@@ -375,7 +572,7 @@ function initSignosPanel() {
     const tempVals = signos.map(s => parseFloat(s.temp)).filter(Number.isFinite);
     const fcVals = signos.map(s => parseFloat(s.fc)).filter(Number.isFinite);
     const fechas = signos.map(s => s.fecha);
-    ctx.font = "12px Segoe UI";
+    ctx.font = "12px Inter";
     ctx.strokeStyle = "#ccc";
     ctx.beginPath();
     ctx.moveTo(40,20); ctx.lineTo(40,160); ctx.lineTo(380,160); ctx.stroke();
@@ -407,11 +604,12 @@ function initSignosPanel() {
   }
 }
 
-// --------- Exámenes ---------
+// ---- Exámenes ----
 function initExamenesPanel() {
   const form = document.getElementById('formExamen');
   form.onsubmit = e => {
     e.preventDefault();
+    if(form.eTipo.value.length < 2) return showToast("Campo requerido",true);
     const examen = {
       fecha: form.eFecha.value,
       tipo: form.eTipo.value,
@@ -423,6 +621,7 @@ function initExamenesPanel() {
     localStorage.setItem('ctp_examenes', JSON.stringify(examenes));
     renderExamenes();
     form.reset();
+    showToast(t("toastGuardado"));
   };
   renderExamenes();
   function renderExamenes() {
@@ -431,7 +630,7 @@ function initExamenesPanel() {
     examenes.forEach((e, i) => {
       html += `<li>
         <strong>${e.fecha}</strong> [${e.tipo}] - ${e.resultado}
-        ${e.url ? ` <a href="${e.url}" target="_blank">[Ver resultado]</a>` : ""}
+        ${e.url ? ` <a href="${e.url}" target="_blank">[${idioma==='es'?"Ver resultado":"See result"}]</a>` : ""}
         <button class="delete-examen" data-idx="${i}">&times;</button>
       </li>`;
     });
@@ -441,15 +640,17 @@ function initExamenesPanel() {
       examenes.splice(btn.dataset.idx,1);
       localStorage.setItem('ctp_examenes', JSON.stringify(examenes));
       renderExamenes();
+      showToast(t("toastEliminado"));
     });
   }
 }
 
-// --------- Alergias ---------
+// ---- Alergias ----
 function initAlergiasPanel() {
   const form = document.getElementById('formAlergia');
   form.onsubmit = e => {
     e.preventDefault();
+    if(form.aTipo.value.length < 2 || !form.aGravedad.value) return showToast("Campo requerido",true);
     const alergia = {
       tipo: form.aTipo.value,
       gravedad: form.aGravedad.value,
@@ -460,6 +661,7 @@ function initAlergiasPanel() {
     localStorage.setItem('ctp_alergias', JSON.stringify(alergias));
     renderAlergias();
     form.reset();
+    showToast(t("toastGuardado"));
   };
   renderAlergias();
   function renderAlergias() {
@@ -477,11 +679,12 @@ function initAlergiasPanel() {
       alergias.splice(btn.dataset.idx,1);
       localStorage.setItem('ctp_alergias', JSON.stringify(alergias));
       renderAlergias();
+      showToast(t("toastEliminado"));
     });
   }
 }
 
-// --------- Notas enriquecidas ---------
+// ---- Notas enriquecidas ----
 function initNotasPanel() {
   const form = document.getElementById('formNota');
   const editor = document.getElementById('notaContent');
@@ -497,6 +700,7 @@ function initNotasPanel() {
   });
   form.onsubmit = e => {
     e.preventDefault();
+    if(editor.innerText.length < 2) return showToast("Campo requerido",true);
     const nota = {
       html: editor.innerHTML,
       fecha: new Date().toLocaleString()
@@ -506,6 +710,7 @@ function initNotasPanel() {
     localStorage.setItem('ctp_notas', JSON.stringify(notas));
     renderNotas();
     editor.innerHTML = '';
+    showToast(t("toastGuardado"));
   };
   renderNotas();
   function renderNotas() {
@@ -524,11 +729,12 @@ function initNotasPanel() {
       notas.splice(btn.dataset.idx,1);
       localStorage.setItem('ctp_notas', JSON.stringify(notas));
       renderNotas();
+      showToast(t("toastEliminado"));
     });
   }
 }
 
-// --------- Educación ---------
+// ---- Educación: búsqueda web ----
 function initEducacionPanel() {
   const form = document.getElementById('formEducacion');
   const queryInput = document.getElementById('eduQuery');
@@ -536,7 +742,7 @@ function initEducacionPanel() {
   form.onsubmit = async e => {
     e.preventDefault();
     const term = queryInput.value.trim();
-    resultado.innerHTML = "Buscando...";
+    resultado.innerHTML = (idioma==='es'?"Buscando...":"Searching...");
     try {
       const res = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(term)}`);
       if (!res.ok) throw new Error();
@@ -546,25 +752,26 @@ function initEducacionPanel() {
           <h3>${data.title}</h3>
           <p>${data.extract}</p>
           ${data.thumbnail ? `<img src="${data.thumbnail.source}" alt="Ilustración" style="max-width:120px" />` : ""}
-          <p><a href="${data.content_urls?.desktop?.page}" target="_blank">Ver más en Wikipedia</a></p>
+          <p><a href="${data.content_urls?.desktop?.page}" target="_blank">${idioma==='es'?"Ver más en Wikipedia":"See on Wikipedia"}</a></p>
         `;
       } else {
-        resultado.innerHTML = "No se encontraron resultados.";
+        resultado.innerHTML = (idioma==='es'?"No se encontraron resultados.":"No results found.");
       }
     } catch {
-      resultado.innerHTML = "Error de conexión o no hay resultados.";
+      resultado.innerHTML = (idioma==='es'?"Error de conexión o no hay resultados.":"Connection error or no results.");
+      showToast(t("error"),true);
     }
   };
 }
 
-// --------- Configuración ---------
+// ---- Configuración y accesibilidad ----
 function initConfigPanel() {
   const form = document.getElementById('formConfig');
   const idiomaSel = document.getElementById('cfgIdioma');
   const fuenteGrande = document.getElementById('cfgFuenteGrande');
   const altoContraste = document.getElementById('cfgAltoContraste');
   const config = JSON.parse(localStorage.getItem('ctp_config') || '{}');
-  idiomaSel.value = config.idioma || 'es';
+  idiomaSel.value = config.idioma || idioma;
   fuenteGrande.checked = !!config.fuenteGrande;
   altoContraste.checked = !!config.altoContraste;
   form.onsubmit = e => {
@@ -574,9 +781,12 @@ function initConfigPanel() {
       fuenteGrande: fuenteGrande.checked,
       altoContraste: altoContraste.checked
     }));
+    idioma = idiomaSel.value;
+    langToggle.textContent = idioma.toUpperCase();
+    showPanel(currentTab);
     root.setAttribute('data-accessibility', fuenteGrande.checked ? 'large-font' : '');
     root.setAttribute('data-accessibility', altoContraste.checked ? 'high-contrast' : '');
-    alert("Configuración guardada.");
+    showToast(t("toastGuardado"));
   };
   root.setAttribute('data-accessibility', fuenteGrande.checked ? 'large-font' : '');
   root.setAttribute('data-accessibility', altoContraste.checked ? 'high-contrast' : '');
