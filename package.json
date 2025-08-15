@@ -1,0 +1,15 @@
+{
+  "name": "caretrack-pro",
+  "version": "1.0.0",
+  "description": "Plataforma profesional de gestión de pacientes para enfermería, construida con Next.js, Tailwind CSS y Prisma.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "firebase": "^12.1.0"
+  }
+}
