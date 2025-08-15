@@ -1,6 +1,65 @@
-/* Estilos modernos y responsivos para panel paciente */
+body {
+  font-family: 'Inter', 'Roboto', Arial, sans-serif;
+  background: #f5f7fa;
+  margin: 0;
+  padding: 0;
+}
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #3b7ddd;
+  color: #fff;
+  padding: .8rem 1.3rem;
+}
+.logo-title {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.logo {
+  width: 32px;
+  height: 32px;
+}
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 60px;
+  width: 180px;
+  height: calc(100vh - 60px);
+  background: #fff;
+  box-shadow: 2px 0 8px rgba(60,60,90,0.05);
+  display: flex;
+  flex-direction: column;
+  padding: .7rem .2rem;
+  gap: .2rem;
+  z-index: 11;
+}
+.menu-btn {
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: #344;
+  padding: .7rem 1.2rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background .18s;
+  font-size: 1rem;
+}
+.menu-btn.active,
+.menu-btn:hover {
+  background: #e8f0fe;
+  color: #3b7ddd;
+  font-weight: 600;
+}
+#main-content {
+  margin-left: 180px;
+  padding: 2rem 2rem 0 2rem;
+  min-height: 80vh;
+}
+.spa-panel,
 .paciente-panel {
-  max-width: 500px;
+  max-width: 600px;
   margin: auto;
   background: #fff;
   border-radius: 16px;
@@ -10,7 +69,7 @@
   flex-direction: column;
   gap: 2.5rem;
 }
-
+.spa-panel h2,
 .paciente-panel h2 {
   display: flex;
   align-items: center;
@@ -19,7 +78,6 @@
   gap: .5rem;
   color: #344;
 }
-
 .form-row {
   display: flex;
   flex-direction: column;
@@ -35,7 +93,7 @@
   font-size: 1rem;
   font-weight: bold;
 }
-.form-row input, .form-row textarea {
+.form-row input, .form-row textarea, .form-row select {
   border-radius: 8px;
   border: 1.2px solid #ccd;
   padding: .5rem .75rem;
@@ -45,7 +103,7 @@
   transition: border-color .18s, box-shadow .18s;
   outline: none;
 }
-.form-row input:focus, .form-row textarea:focus {
+.form-row input:focus, .form-row textarea:focus, .form-row select:focus {
   border-color: #3b7ddd;
   box-shadow: 0 0 0 2px #3b7ddd33;
 }
@@ -97,13 +155,32 @@
 .toast.info {
   background: #444;
 }
+.user-state {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+.doctor-photo {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+footer {
+  background: #fff;
+  color: #888;
+  text-align: center;
+  padding: .7rem 0;
+  box-shadow: 0 -1px 4px rgba(60,60,90,0.04);
+  margin-top: 2rem;
+}
+@media (max-width: 900px) {
+  .sidebar { width: 56px; }
+  #main-content { margin-left: 56px; }
+  .spa-panel, .paciente-panel { padding: .7rem .2rem; }
+}
 @media (max-width: 600px) {
-  .paciente-panel {
-    padding: 1rem .5rem;
-    gap: 1.5rem;
-  }
-  .form-row input,
-  .form-row textarea {
-    font-size: .98rem;
-  }
+  .sidebar { width: 44px; }
+  #main-content { margin-left: 44px; padding: 1rem .3rem 0 .3rem; }
+  .spa-panel, .paciente-panel { gap: 1.2rem; }
 }
