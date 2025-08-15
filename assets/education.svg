@@ -1,1 +1,6 @@
-
+<!-- https://www.svgrepo.com/svg/508497/graduation-cap -->
+<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
+  <path fill="#1976d2" d="M12 3l10 5-10 5-10-5 10-5z"/>
+  <path fill="#90caf9" d="M12 13v7"/>
+  <path stroke="#1976d2" stroke-width="2" d="M2 8l10 5 10-5"/>
+</svg>
