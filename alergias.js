@@ -1,3 +1,7 @@
+import { db } from './firebase.js';
+import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { showToast } from './toast.js';
+
 export function panelAlergias() {
   return `
   <section class="spa-panel">
@@ -7,14 +11,25 @@ export function panelAlergias() {
       <textarea id="alergias_texto"></textarea>
     </div>
     <div class="form-actions">
-      <button id="alergias_limpiar" type="button">Limpiar</button>
+      <button id="alergias_guardar">Guardar</button>
+      <button id="alergias_cargar">Cargar</button>
     </div>
   </section>
   `;
 }
 
 export function panelAlergiasInit() {
-  document.getElementById('alergias_limpiar').onclick = () => {
-    document.getElementById('alergias_texto').value = '';
+  const text = document.getElementById('alergias_texto');
+  document.getElementById('alergias_guardar').onclick = async () => {
+    await setDoc(doc(db, "alergias", "principal"), {
+      texto: text.value,
+      updated: new Date().toISOString()
+    });
+    showToast('Alergias guardadas');
+  };
+  document.getElementById('alergias_cargar').onclick = async () => {
+    const snap = await getDoc(doc(db, "alergias", "principal"));
+    text.value = snap.exists() ? snap.data().texto : "";
+    showToast('Alergias cargadas');
   };
 }
