@@ -1,6 +1,4 @@
 // CareTrack-Pro SPA avanzado JS
-// ===============================
-// Estructura modular por panel, persistencia local y búsqueda web.
 
 // --------- Gestión de Tema ---------
 const themeToggle = document.getElementById('themeToggle');
@@ -16,7 +14,7 @@ themeToggle.addEventListener('click', () => {
   setTheme(root.getAttribute('data-theme') === "dark" ? "light" : "dark");
 });
 
-// --------- SPA Navegación de Paneles ---------
+// --------- SPA Navegación Paneles ---------
 const menuBtns = document.querySelectorAll('.menu-btn');
 const mainContent = document.getElementById('main-content');
 let currentTab = "paciente";
@@ -45,8 +43,48 @@ function showPanel(tab) {
 showPanel(currentTab);
 
 // --------- Paneles HTML ---------
-function renderPacientePanel() { /* igual que antes */ /* ... */ }
-function renderPacienteItem(paciente, idx) { /* igual que antes */ /* ... */ }
+function renderPacientePanel() {
+  return `
+    <h2>Pacientes</h2>
+    <form id="formPaciente" class="panel-form">
+      <div class="form-row">
+        <label>Nombre: <input type="text" id="pNombre" required /></label>
+        <label>Edad: <input type="number" id="pEdad" min="0" max="120" required /></label>
+        <label>Género:
+          <select id="pGenero">
+            <option value="">Seleccione</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </label>
+      </div>
+      <div class="form-row">
+        <label>Contacto: <input type="text" id="pContacto" /></label>
+        <label>Dirección: <input type="text" id="pDireccion" /></label>
+        <label>Foto: <input type="file" id="pFoto" accept="image/*" /></label>
+      </div>
+      <button type="submit">Registrar</button>
+    </form>
+    <div id="pacientesList"></div>
+  `;
+}
+function renderPacienteItem(paciente, idx) {
+  return `
+    <div class="paciente-card" data-idx="${idx}">
+      <img src="${paciente.foto || 'assets/user.svg'}" alt="Foto" class="paciente-foto" />
+      <div class="paciente-info">
+        <strong>${paciente.nombre}</strong> (${paciente.edad} años, ${paciente.genero})<br>
+        ${paciente.contacto ? `<span>Contacto: ${paciente.contacto}</span><br>` : ""}
+        ${paciente.direccion ? `<span>Dirección: ${paciente.direccion}</span><br>` : ""}
+      </div>
+      <div class="paciente-actions">
+        <button class="edit-paciente" title="Editar">&#9998;</button>
+        <button class="delete-paciente" title="Eliminar">&times;</button>
+      </div>
+    </div>
+  `;
+}
 function renderHistoriaPanel() {
   return `
     <h2>Historia Clínica</h2>
@@ -121,6 +159,7 @@ function renderNotasPanel() {
         <button type="button" class="nota-bt" data-cmd="bold"><b>B</b></button>
         <button type="button" class="nota-bt" data-cmd="italic"><i>I</i></button>
         <button type="button" class="nota-bt" data-cmd="insertUnorderedList">&#8226; Lista</button>
+        <button type="button" class="nota-bt" id="imgInsertBtn">&#128247; Imagen</button>
       </div>
       <div contenteditable="true" id="notaContent" class="nota-content"></div>
       <button type="submit">Guardar Nota</button>
@@ -128,8 +167,34 @@ function renderNotasPanel() {
     <div id="notasList"></div>
   `;
 }
-function renderEducacionPanel() { /* igual que antes */ /* ... */ }
-function renderConfigPanel() { /* igual que antes */ /* ... */ }
+function renderEducacionPanel() {
+  return `
+    <h2>Educación</h2>
+    <form id="formEducacion" class="panel-form">
+      <label>Búsqueda web:
+        <input type="search" id="eduQuery" placeholder="Ej: fiebre, ibuprofeno..." />
+      </label>
+      <button type="submit">Buscar</button>
+    </form>
+    <div id="eduResultado"></div>
+  `;
+}
+function renderConfigPanel() {
+  return `
+    <h2>Configuración</h2>
+    <form id="formConfig" class="panel-form">
+      <label>Cambio de idioma:
+        <select id="cfgIdioma">
+          <option value="es">Español</option>
+          <option value="en">English</option>
+        </select>
+      </label>
+      <label><input type="checkbox" id="cfgFuenteGrande" /> Fuente grande</label>
+      <label><input type="checkbox" id="cfgAltoContraste" /> Alto contraste</label>
+      <button type="submit">Guardar Configuración</button>
+    </form>
+  `;
+}
 
 // --------- Inicialización lógica por panel ---------
 const panelInit = {
@@ -142,6 +207,79 @@ const panelInit = {
   educacion: initEducacionPanel,
   configuracion: initConfigPanel
 };
+
+// --------- Pacientes ---------
+function initPacientePanel() {
+  const form = document.getElementById('formPaciente');
+  const fotoInput = document.getElementById('pFoto');
+  let fotoBase64 = "";
+  fotoInput?.addEventListener('change', e => {
+    const file = fotoInput.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = ev => { fotoBase64 = ev.target.result; };
+      reader.readAsDataURL(file);
+    }
+  });
+  form.onsubmit = e => {
+    e.preventDefault();
+    const paciente = {
+      nombre: form.pNombre.value,
+      edad: form.pEdad.value,
+      genero: form.pGenero.value,
+      contacto: form.pContacto.value,
+      direccion: form.pDireccion.value,
+      foto: fotoBase64
+    };
+    const pacientes = JSON.parse(localStorage.getItem('ctp_pacientes') || "[]");
+    pacientes.push(paciente);
+    localStorage.setItem('ctp_pacientes', JSON.stringify(pacientes));
+    renderPacientes();
+    form.reset();
+    fotoBase64 = "";
+  };
+  renderPacientes();
+  function renderPacientes(filter = "") {
+    const pacientes = JSON.parse(localStorage.getItem('ctp_pacientes') || "[]");
+    let html = '<div class="pacientes-list">';
+    pacientes
+      .map((p, i) => ({p, i}))
+      .filter(({p}) => !filter || p.nombre.toLowerCase().includes(filter.toLowerCase()))
+      .forEach(({p, i}) => {
+        html += renderPacienteItem(p, i);
+      });
+    html += '</div>';
+    document.getElementById('pacientesList').innerHTML = html;
+    document.querySelectorAll('.edit-paciente').forEach(btn => btn.onclick = () => editPaciente(btn));
+    document.querySelectorAll('.delete-paciente').forEach(btn => btn.onclick = () => deletePaciente(btn));
+  }
+  function editPaciente(btn) {
+    const idx = btn.closest('.paciente-card').dataset.idx;
+    const pacientes = JSON.parse(localStorage.getItem('ctp_pacientes') || "[]");
+    const p = pacientes[idx];
+    form.pNombre.value = p.nombre;
+    form.pEdad.value = p.edad;
+    form.pGenero.value = p.genero;
+    form.pContacto.value = p.contacto;
+    form.pDireccion.value = p.direccion;
+    fotoBase64 = p.foto || "";
+    pacientes.splice(idx,1);
+    localStorage.setItem('ctp_pacientes', JSON.stringify(pacientes));
+    renderPacientes();
+  }
+  function deletePaciente(btn) {
+    const idx = btn.closest('.paciente-card').dataset.idx;
+    const pacientes = JSON.parse(localStorage.getItem('ctp_pacientes') || "[]");
+    if (confirm("¿Eliminar paciente?")) {
+      pacientes.splice(idx,1);
+      localStorage.setItem('ctp_pacientes', JSON.stringify(pacientes));
+      renderPacientes();
+    }
+  }
+  document.getElementById('searchPaciente').oninput = function() {
+    renderPacientes(this.value);
+  };
+}
 
 // --------- Historia Clínica ---------
 function initHistoriaPanel() {
@@ -237,12 +375,10 @@ function initSignosPanel() {
     const tempVals = signos.map(s => parseFloat(s.temp)).filter(Number.isFinite);
     const fcVals = signos.map(s => parseFloat(s.fc)).filter(Number.isFinite);
     const fechas = signos.map(s => s.fecha);
-    // Ejes y líneas
     ctx.font = "12px Segoe UI";
     ctx.strokeStyle = "#ccc";
     ctx.beginPath();
     ctx.moveTo(40,20); ctx.lineTo(40,160); ctx.lineTo(380,160); ctx.stroke();
-    // Temperatura
     ctx.strokeStyle = "#1976d2";
     ctx.beginPath();
     tempVals.forEach((v,i) => {
@@ -253,7 +389,6 @@ function initSignosPanel() {
     });
     ctx.stroke();
     ctx.fillStyle="#1976d2"; ctx.fillText("Temp",10,30);
-    // FC
     ctx.strokeStyle="#ffb74d";
     ctx.beginPath();
     fcVals.forEach((v,i) => {
@@ -264,7 +399,6 @@ function initSignosPanel() {
     });
     ctx.stroke();
     ctx.fillStyle="#ffb74d"; ctx.fillText("FC",10,50);
-    // Fechas
     ctx.fillStyle="#222";
     fechas.forEach((f,i) => {
       const x = 40 + i*(340/(fechas.length-1||1));
@@ -352,7 +486,14 @@ function initNotasPanel() {
   const form = document.getElementById('formNota');
   const editor = document.getElementById('notaContent');
   document.querySelectorAll('.nota-bt').forEach(bt => {
-    bt.onclick = () => document.execCommand(bt.dataset.cmd, false, null);
+    if(bt.id === 'imgInsertBtn') {
+      bt.onclick = () => {
+        const url = prompt("URL de la imagen:");
+        if(url) document.execCommand('insertImage', false, url);
+      };
+    } else {
+      bt.onclick = () => document.execCommand(bt.dataset.cmd, false, null);
+    }
   });
   form.onsubmit = e => {
     e.preventDefault();
@@ -440,5 +581,3 @@ function initConfigPanel() {
   root.setAttribute('data-accessibility', fuenteGrande.checked ? 'large-font' : '');
   root.setAttribute('data-accessibility', altoContraste.checked ? 'high-contrast' : '');
 }
-
-// --------- Fin JS ---------
