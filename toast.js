@@ -1,6 +1,3 @@
-// toast.js
-// Muestra mensajes flotantes de confirmación visual
-
 export function showToast(message, type = "success") {
   let toast = document.getElementById("toast");
   if (!toast) {
