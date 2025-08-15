@@ -1,1 +1,5 @@
-
+<!-- https://www.svgrepo.com/svg/438025/allergy -->
+<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
+  <ellipse cx="12" cy="12" rx="7" ry="9" fill="#ffd600" stroke="#1976d2" stroke-width="2"/>
+  <path stroke="#1976d2" stroke-width="2" d="M12 11v3"/>
+</svg>
