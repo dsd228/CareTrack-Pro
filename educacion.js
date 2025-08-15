@@ -56,12 +56,10 @@ const fallbackProtocolos = [
 // Funciones externas
 // =====================
 async function buscarWiki(term, lang = "es") {
-  const url = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(term)}`;
   try {
-    const res = await fetch(url);
+    const res = await fetch(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(term)}`);
     if (!res.ok) return null;
-    const data = await res.json();
-    return data;
+    return await res.json();
   } catch {
     return null;
   }
@@ -116,15 +114,14 @@ export function panelEducacion() {
 // Inicialización JS
 // =====================
 export function panelEducacionInit() {
-  // Inject CSS responsivo
   const style = document.createElement("style");
   style.textContent = `
-  .tabs { display:flex; gap:10px; margin:10px 0; flex-wrap: wrap; }
-  .tab-btn { padding:5px 10px; cursor:pointer; border:none; background:#1976d2; color:white; border-radius:5px; }
-  .tab-btn.active { background:#0d47a1; }
-  #educacion_resultado .card { border:1px solid #1976d2; padding:10px; border-radius:5px; margin:5px 0; background:#f5f5f5; }
-  #educacion_resultado ul, #educacion_resultado ol { margin:5px 0 10px 20px; }
-  @media (max-width:600px) { .tabs { flex-direction: column; } }
+    .tabs { display:flex; gap:10px; margin:10px 0; flex-wrap: wrap; }
+    .tab-btn { padding:5px 10px; cursor:pointer; border:none; background:#1976d2; color:white; border-radius:5px; }
+    .tab-btn.active { background:#0d47a1; }
+    #educacion_resultado .card { border:1px solid #1976d2; padding:10px; border-radius:5px; margin:5px 0; background:#f5f5f5; }
+    #educacion_resultado ul, #educacion_resultado ol { margin:5px 0 10px 20px; }
+    @media (max-width:600px) { .tabs { flex-direction: column; } }
   `;
   document.head.appendChild(style);
 
@@ -144,7 +141,7 @@ export function panelEducacionInit() {
     };
   });
 
-  // Guardar / Cargar notas personalizadas
+  // Guardar / Cargar notas
   document.getElementById('educacion_guardar').onclick = async () => {
     await setDoc(doc(db, "educacion", "principal"), {
       texto: text.value,
@@ -227,15 +224,11 @@ export function panelEducacionInit() {
 
     if (activeTab === "protocolos") {
       let local = fallbackProtocolos.filter(p => p.nombre.toLowerCase().includes(term.toLowerCase()));
-      if    if (activeTab === "protocolos") {
-      let local = fallbackProtocolos.filter(p => p.nombre.toLowerCase().includes(term.toLowerCase()));
       if (local.length) {
         resultado.innerHTML = local.map(p => `
           <div class="card">
             <h3>${p.nombre}</h3>
-            <ol>
-              ${p.pasos.map(paso => `<li>${paso}</li>`).join("")}
-            </ol>
+            <ol>${p.pasos.map(paso => `<li>${paso}</li>`).join("")}</ol>
           </div>
         `).join("");
       } else {
