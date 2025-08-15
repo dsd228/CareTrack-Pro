@@ -37,6 +37,20 @@ export function initAuth() {
 export function login(email, pass) {
   return signInWithEmailAndPassword(auth, email, pass);
 }
+export function showNotification(msg) {
+  // Simple ejemplo de notificación
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.textContent = msg.text || msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+export function setupRealtimeNotifications(userId, cb) {
+  // Implementación pendiente: solo llama al callback como ejemplo
+  // Puedes conectar aquí tu lógica de notificaciones desde Firebase
+  // cb({ text: "Notificaciones en tiempo real no implementadas aún." });
+}
 export function logout() { return signOut(auth); }
 export function getRole(user=currentUser) { return role; }
 export function onUserChange(cb) {
