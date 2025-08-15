@@ -1,48 +1,48 @@
-// auth.js
 import { auth, db } from './firebase.js';
 import {
-  onAuthStateChanged,
+  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  createUserWithEmailAndPassword,
+  onAuthStateChanged,
   updateProfile
 } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
-import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-let currentUser = null;
-let role = "medico";
+export let currentUser = null;
+export let currentRole = "public";
 
-export function initAuth() {
-  return new Promise(resolve => {
-    onAuthStateChanged(auth, async user => {
-      currentUser = user;
-      if (user) {
-        // Obtener rol desde Firestore
-        const ref = doc(db, "roles", user.uid);
-        const snap = await getDoc(ref);
-        role = snap.exists() ? snap.data().role : "medico";
-      } else {
-        role = "public";
-      }
-      resolve(user);
-    });
+export function subscribeAuth(callback) {
+  onAuthStateChanged(auth, async user => {
+    currentUser = user;
+    if (user) {
+      const ref = doc(db, "roles", user.uid);
+      const snap = await getDoc(ref);
+      currentRole = snap.exists() ? snap.data().role : "medico";
+    } else {
+      currentRole = "public";
+    }
+    if (typeof callback === "function") callback(currentUser, currentRole);
   });
 }
-export function login(email, pass) {
-  return signInWithEmailAndPassword(auth, email, pass);
+
+export async function login(email, pass) {
+  const res = await signInWithEmailAndPassword(auth, email, pass);
+  return res.user;
 }
-export function logout() { return signOut(auth); }
-export function getRole(user=currentUser) { return role; }
-export function onUserChange(cb) {
-  onAuthStateChanged(auth, cb);
+
+export async function logout() {
+  await signOut(auth);
 }
-export async function register(email, pass, name, roleUser="medico") {
+
+export async function register(email, pass, name, role="medico") {
   const cred = await createUserWithEmailAndPassword(auth, email, pass);
   await updateProfile(cred.user, { displayName: name });
   await setDoc(doc(db, "roles", cred.user.uid), {
-    role: roleUser,
-    name: name,
-    email: email
+    role, name, email
   });
   return cred.user;
+}
+
+export function getRole() {
+  return currentRole;
 }
