@@ -16,6 +16,45 @@ export const panelInit = {
   registro: initRegistroPanel,
   // ...
 };
+function renderAdminPanel() {
+  return `
+    <div class="card">
+      <h2>Panel de administrador</h2>
+      <div id="userRoles"></div>
+    </div>
+  `;
+}
+function initAdminPanel() {
+  import('./auth.js').then(async ({ db }) => {
+    // Muestra todos los usuarios y sus roles
+    const { getDocs, collection, updateDoc } = await import("https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js");
+    const qsnap = await getDocs(collection(db, "roles"));
+    let html = "<table><tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Acciones</th></tr>";
+    qsnap.forEach(docSnap => {
+      const u = docSnap.data();
+      html += `<tr>
+        <td>${u.name}</td>
+        <td>${u.email}</td>
+        <td>${u.role}</td>
+        <td>
+          <select data-uid="${docSnap.id}" class="changeRole">
+            <option value="medico" ${u.role==="medico"?"selected":""}>Médico</option>
+            <option value="paciente" ${u.role==="paciente"?"selected":""}>Paciente</option>
+            <option value="admin" ${u.role==="admin"?"selected":""}>Admin</option>
+          </select>
+        </td>
+      </tr>`;
+    });
+    html += "</table>";
+    document.getElementById('userRoles').innerHTML = html;
+    document.querySelectorAll('.changeRole').forEach(sel => {
+      sel.onchange = async function() {
+        await updateDoc(doc(db, "roles", this.dataset.uid), { role: this.value });
+        alert("Rol actualizado, recarga la página");
+      };
+    });
+  });
+}
 
 // ---- Login Panel ----
 function renderLoginPanel() {
