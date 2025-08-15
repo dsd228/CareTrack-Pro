@@ -1,3 +1,7 @@
+import { db } from './firebase.js';
+import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { showToast } from './toast.js';
+
 export function panelExamenes() {
   return `
   <section class="spa-panel">
@@ -7,14 +11,25 @@ export function panelExamenes() {
       <textarea id="examenes_texto"></textarea>
     </div>
     <div class="form-actions">
-      <button id="examenes_limpiar" type="button">Limpiar</button>
+      <button id="examenes_guardar">Guardar</button>
+      <button id="examenes_cargar">Cargar</button>
     </div>
   </section>
   `;
 }
 
 export function panelExamenesInit() {
-  document.getElementById('examenes_limpiar').onclick = () => {
-    document.getElementById('examenes_texto').value = '';
+  const text = document.getElementById('examenes_texto');
+  document.getElementById('examenes_guardar').onclick = async () => {
+    await setDoc(doc(db, "examenes", "principal"), {
+      texto: text.value,
+      updated: new Date().toISOString()
+    });
+    showToast('Exámenes guardados');
+  };
+  document.getElementById('examenes_cargar').onclick = async () => {
+    const snap = await getDoc(doc(db, "examenes", "principal"));
+    text.value = snap.exists() ? snap.data().texto : "";
+    showToast('Exámenes cargados');
   };
 }
