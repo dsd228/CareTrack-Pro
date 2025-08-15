@@ -2,6 +2,100 @@ import { t } from './lang.js';
 import { buscarMedicamento, buscarWiki } from './api.js';
 
 // --- Paneles HTML ---
+// ... (import y paneles anteriores)
+export const panels = {
+  // ...otros paneles
+  login: renderLoginPanel,
+  registro: renderRegistroPanel,
+  // ...
+};
+
+export const panelInit = {
+  // ...otros paneles
+  login: initLoginPanel,
+  registro: initRegistroPanel,
+  // ...
+};
+
+// ---- Login Panel ----
+function renderLoginPanel() {
+  return `
+    <div class="card">
+      <h2>Iniciar sesión</h2>
+      <form id="formLogin" class="panel-form" autocomplete="off">
+        <label>Email: <input type="email" id="loginEmail" required /></label>
+        <label>Contraseña: <input type="password" id="loginPass" required /></label>
+        <button type="submit">Entrar</button>
+      </form>
+      <p>¿No tienes cuenta? <button type="button" id="goRegistro">Regístrate</button></p>
+      <div id="loginError" style="color:#f44336"></div>
+    </div>
+  `;
+}
+function initLoginPanel() {
+  import('./auth.js').then(({ login }) => {
+    document.getElementById('formLogin').onsubmit = async e => {
+      e.preventDefault();
+      const email = e.target.loginEmail.value;
+      const pass = e.target.loginPass.value;
+      try {
+        await login(email, pass);
+        location.reload(); // recarga para mostrar paneles del usuario
+      } catch (err) {
+        document.getElementById('loginError').textContent = "Error: " + (err.message || "Credenciales incorrectas");
+      }
+    };
+  });
+  document.getElementById('goRegistro').onclick = () => {
+    window.location.hash = "#registro";
+    // Si usas SPA, llama a showPanel("registro")
+  };
+}
+
+// ---- Registro Panel ----
+function renderRegistroPanel() {
+  return `
+    <div class="card">
+      <h2>Registro de usuario</h2>
+      <form id="formRegistro" class="panel-form" autocomplete="off">
+        <label>Email: <input type="email" id="regEmail" required /></label>
+        <label>Contraseña: <input type="password" id="regPass" required minlength="6" /></label>
+        <label>Nombre completo: <input type="text" id="regName" required /></label>
+        <label>Rol:
+          <select id="regRole" required>
+            <option value="medico">Médico</option>
+            <option value="paciente">Paciente</option>
+            <option value="admin">Admin</option>
+          </select>
+        </label>
+        <button type="submit">Crear cuenta</button>
+      </form>
+      <p>¿Ya tienes cuenta? <button type="button" id="goLogin">Entrar</button></p>
+      <div id="regError" style="color:#f44336"></div>
+    </div>
+  `;
+}
+function initRegistroPanel() {
+  import('./auth.js').then(({ register }) => {
+    document.getElementById('formRegistro').onsubmit = async e => {
+      e.preventDefault();
+      const email = e.target.regEmail.value;
+      const pass = e.target.regPass.value;
+      const name = e.target.regName.value;
+      const role = e.target.regRole.value;
+      try {
+        await register(email, pass, name, role);
+        location.reload(); // recarga para mostrar paneles del usuario
+      } catch (err) {
+        document.getElementById('regError').textContent = "Error: " + (err.message || "No se pudo registrar");
+      }
+    };
+  });
+  document.getElementById('goLogin').onclick = () => {
+    window.location.hash = "#login";
+    // Si usas SPA, llama a showPanel("login")
+  };
+}
 export const panels = {
   paciente: renderPacientePanel,
   historia: renderHistoriaPanel,
