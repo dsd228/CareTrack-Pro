@@ -1,5 +1,3 @@
-/* CareTrack-Pro Styles */
-/* ========== Variables ========== */
 :root {
   --primary: #1976d2;
   --accent: #ffb74d;
@@ -126,14 +124,8 @@ main#main-content {
   background: var(--bg);
   min-height: 80vh;
 }
-footer {
-  text-align: center;
-  padding: 2rem 0 1rem 0;
-  font-size: 0.9rem;
-  color: #888;
-  background: transparent;
-}
-/* Animaciones panel SPA */
+
+/* Panel SPA animaciones */
 .spa-panel {
   display: none;
   opacity: 0;
@@ -152,7 +144,31 @@ footer {
   from { opacity: 0; transform: translateY(12px);}
   to   { opacity: 1; transform: translateY(0);}
 }
-/* Responsive */
+footer {
+  text-align: center;
+  padding: 2rem 0 1rem 0;
+  font-size: 0.9rem;
+  color: #888;
+  background: transparent;
+}
+
+/* Paneles dinámicos */
+.panel-form { margin-bottom: 2rem; }
+.form-row { display: flex; gap: 2rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+.pacientes-list, .historia-list, .examen-list, .alergia-list, .notas-list { margin-top: 1rem; }
+.paciente-card { display: flex; align-items: center; gap: 1rem; background: var(--bg-panel); margin: 0.5rem 0; border-radius: 0.6rem; border:1px solid var(--border); padding: 0.6rem 1rem; }
+.paciente-foto { width: 48px; height: 48px; object-fit: cover; border-radius: 50%; border: 2px solid var(--border); }
+.paciente-info { flex: 1; }
+.paciente-actions button { background: var(--accent); border: none; border-radius: 50%; width: 2rem; height: 2rem; color: #222; font-size: 1.1rem; cursor: pointer; margin-left: 0.3rem; }
+.delete-historia, .delete-examen, .delete-alergia, .delete-nota, .delete-signo { background: var(--accent); border:none; border-radius: 50%; width:2rem; height:2rem; color:#222; font-size:1.1rem; cursor:pointer; margin-left:0.3rem; }
+.historia-list li, .examen-list li, .alergia-list li, .notas-list li { background: var(--bg-panel); margin: 0.4rem 0; padding: 0.7rem 1rem; border-radius: 0.5rem; border: 1px solid var(--border); display: flex; align-items: center; gap: 1rem; }
+.signos-table { border-collapse: collapse; width: 100%; background: var(--bg-panel); margin-top: 1rem; }
+.signos-table th, .signos-table td { border: 1px solid var(--border); padding: 0.4rem 0.6rem; }
+.nota-content { min-height: 80px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 0.4rem; padding: 0.7rem; margin-bottom: 0.6rem; }
+.nota-bt { background: var(--sidebar-bg); border: none; border-radius: 0.4rem; margin-right: 0.3rem; cursor: pointer; font-size: 1.05rem; padding: 0.3rem 0.7rem; }
+.nota-fecha { color: #888; font-size: 0.95rem; margin-right: 1rem; }
+.nota-html img { max-width:120px; border-radius:0.5rem; margin:0.5rem 0; }
+
 @media (max-width: 900px) {
   .dashboard-layout { flex-direction: column; }
   .sidebar { flex-direction: row; width: 100vw; border-right: none; border-bottom: 1px solid var(--border); overflow-x: auto; }
@@ -178,4 +194,3 @@ footer {
   --text: #FFD600 !important;
   --border: #FFD600 !important;
 }
-/* ...más estilos para formularios, listas y gráficos en paneles (ver script.js para estructura SPA) */
