@@ -1,5 +1,9 @@
-// Importa las funciones necesarias del SDK de Firebase
+// auth.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+const firebaseConfig = { /* ... */ };
+const app = initializeApp(firebaseConfig);
+
+// En otros archivos, solo importa desde Firebase, no vuelvas a inicializar la app.
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
