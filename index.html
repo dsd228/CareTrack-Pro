@@ -29,22 +29,24 @@
     </div>
   </header>
   <aside class="sidebar" aria-label="Menú principal">
-    <button class="menu-btn active" data-tab="paciente" aria-label="Paciente"><img src="assets/user.svg" alt="" class="icon" /><span class="menu-text">Paciente</span></button>
-    <button class="menu-btn" data-tab="historia" aria-label="Historia Clínica"><img src="assets/history.svg" alt="" class="icon" /><span class="menu-text">Historia Clínica</span></button>
-    <button class="menu-btn" data-tab="signos" aria-label="Signos Vitales"><img src="assets/vitals.svg" alt="" class="icon" /><span class="menu-text">Signos Vitales</span></button>
-    <button class="menu-btn" data-tab="examenes" aria-label="Exámenes"><img src="assets/lab.svg" alt="" class="icon" /><span class="menu-text">Exámenes</span></button>
-    <button class="menu-btn" data-tab="alergias" aria-label="Alergias"><img src="assets/allergy.svg" alt="" class="icon" /><span class="menu-text">Alergias</span></button>
-    <button class="menu-btn" data-tab="notas" aria-label="Notas"><img src="assets/notes.svg" alt="" class="icon" /><span class="menu-text">Notas</span></button>
-    <button class="menu-btn" data-tab="educacion" aria-label="Educación"><img src="assets/education.svg" alt="" class="icon" /><span class="menu-text">Educación</span></button>
-    <button class="menu-btn" data-tab="configuracion" aria-label="Configuración"><img src="assets/settings.svg" alt="" class="icon" /><span class="menu-text">Configuración</span></button>
-    <!-- Paneles restringidos por rol -->
-    <button class="menu-btn" data-tab="admin" aria-label="Admin" style="display:none;"><img src="assets/settings.svg" alt="" class="icon" /><span class="menu-text">Admin</span></button>
+    <button class="menu-btn active" data-tab="paciente">Paciente</button>
+    <button class="menu-btn" data-tab="historia">Historia Clínica</button>
+    <button class="menu-btn" data-tab="signos">Signos Vitales</button>
+    <button class="menu-btn" data-tab="examenes">Exámenes</button>
+    <button class="menu-btn" data-tab="alergias">Alergias</button>
+    <button class="menu-btn" data-tab="notas">Notas</button>
+    <button class="menu-btn" data-tab="educacion">Educación</button>
+    <button class="menu-btn" data-tab="configuracion">Configuración</button>
+    <button class="menu-btn" data-tab="admin" style="display:none;">Admin</button>
+    <button class="menu-btn" data-tab="login" style="display:none;">Login</button>
+    <button class="menu-btn" data-tab="registro" style="display:none;">Registro</button>
   </aside>
   <main id="main-content" tabindex="0" aria-label="Contenido principal SPA"></main>
   <footer>
     <small>CareTrack-Pro &copy; 2025 · GitHub Pages Ready</small>
   </footer>
-  <!-- Módulos JS -->
+  <!-- Centralización de módulos JS: -->
+  <script type="module" src="firebase.js"></script>
   <script type="module" src="main.js"></script>
 </body>
 </html>
