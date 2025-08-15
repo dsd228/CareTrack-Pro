@@ -59,12 +59,9 @@ onUserChange(user => {
     document.getElementById('logoutBtn').style.display = "none";
     document.getElementById('doctorName').textContent = "";
     document.querySelector('[data-tab="admin"]').style.display = "none";
-    // Optionally redirect to login panel
   }
 });
 
-
-initAuth().then(user => {
+initAuth().then(() => {
   showPanel(currentTab);
-
 });
