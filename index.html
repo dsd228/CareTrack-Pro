@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Configuración | CareTrack-Pro</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Configuración</h1>
+    <button id="themeToggle" aria-label="Alternar tema" title="Alternar tema"></button>
+  </header>
+
+  <main>
+    <section class="accordion">
+      <!-- Perfil de Usuario -->
+      <div class="accordion-item">
+        <button class="accordion-header" type="button" aria-expanded="false">
+          Perfil de Usuario
+          <span class="arrow"></span>
+        </button>
+        <div class="accordion-content">
+          <form id="userProfileForm" autocomplete="off">
+            <label>
+              Nombre:
+              <input type="text" id="userName" name="userName" required>
+            </label>
+            <label>
+              Email:
+              <input type="email" id="userEmail" name="userEmail" required>
+            </label>
+            <label>
+              Foto:
+              <input type="file" id="userPhoto" name="userPhoto" accept="image/*">
+            </label>
+            <div id="photoPreview"></div>
+            <button type="submit">Guardar Perfil</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Preferencias -->
+      <div class="accordion-item">
+        <button class="accordion-header" type="button" aria-expanded="false">
+          Preferencias
+          <span class="arrow"></span>
+        </button>
+        <div class="accordion-content">
+          <form id="preferencesForm">
+            <label class="switch">
+              <input type="checkbox" id="languageSwitch">
+              <span class="slider"></span>
+              <span class="switch-label">Idioma: <span id="languageText">Español</span></span>
+            </label>
+            <label class="switch">
+              <input type="checkbox" id="themeSwitch">
+              <span class="slider"></span>
+              <span class="switch-label">Tema Oscuro</span>
+            </label>
+            <button type="submit">Guardar Preferencias</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Seguridad -->
+      <div class="accordion-item">
+        <button class="accordion-header" type="button" aria-expanded="false">
+          Seguridad
+          <span class="arrow"></span>
+        </button>
+        <div class="accordion-content">
+          <form id="securityForm">
+            <label>
+              Nueva Contraseña:
+              <input type="password" id="newPassword" name="newPassword" minlength="6">
+            </label>
+            <label class="switch">
+              <input type="checkbox" id="twoFASwitch">
+              <span class="slider"></span>
+              <span class="switch-label">Activar 2FA</span>
+            </label>
+            <button type="submit">Guardar Seguridad</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Notificaciones -->
+      <div class="accordion-item">
+        <button class="accordion-header" type="button" aria-expanded="false">
+          Notificaciones
+          <span class="arrow"></span>
+        </button>
+        <div class="accordion-content">
+          <form id="notificationsForm">
+            <label>
+              <input type="checkbox" name="notif_email" id="notifEmail">
+              Email
+            </label>
+            <label>
+              <input type="checkbox" name="notif_sms" id="notifSMS">
+              SMS
+            </label>
+            <label>
+              <input type="checkbox" name="notif_push" id="notifPush">
+              Push
+            </label>
+            <label>
+              <input type="checkbox" name="notif_app" id="notifApp">
+              En la App
+            </label>
+            <button type="submit">Guardar Notificaciones</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <small>CareTrack-Pro &copy; 2025</small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
