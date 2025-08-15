@@ -1,0 +1,2 @@
+### Crear página de signos vitales
+Desarrollar una página para visualizar y registrar los signos vitales de los pacientes. Debe incluir acceso rápido desde el menú principal y permitir agregar, consultar y editar registros.
