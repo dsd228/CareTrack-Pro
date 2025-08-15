@@ -26,7 +26,7 @@
     </div>
   </header>
   <aside class="sidebar" aria-label="Menú principal">
-    <button class="menu-btn active" data-tab="paciente">Paciente</button>
+    <button class="menu-btn" data-tab="paciente">Paciente</button>
     <button class="menu-btn" data-tab="historia">Historia Clínica</button>
     <button class="menu-btn" data-tab="signos">Signos Vitales</button>
     <button class="menu-btn" data-tab="examenes">Exámenes</button>
@@ -34,15 +34,16 @@
     <button class="menu-btn" data-tab="notas">Notas</button>
     <button class="menu-btn" data-tab="educacion">Educación</button>
     <button class="menu-btn" data-tab="configuracion">Configuración</button>
-    <button class="menu-btn" data-tab="admin" style="display:none;">Admin</button>
-    <button class="menu-btn" data-tab="login" style="display:none;">Login</button>
-    <button class="menu-btn" data-tab="registro" style="display:none;">Registro</button>
+    <button class="menu-btn" data-tab="admin">Admin</button>
+    <button class="menu-btn" data-tab="login">Login</button>
+    <button class="menu-btn" data-tab="registro">Registro</button>
   </aside>
   <main id="main-content" tabindex="0" aria-label="Contenido principal SPA"></main>
   <footer>
     <small>CareTrack-Pro &copy; 2025 · GitHub Pages Ready</small>
   </footer>
   <script type="module" src="firebase.js"></script>
+  <script type="module" src="auth.js"></script>
   <script type="module" src="main.js"></script>
   <script type="module" src="toast.js"></script>
   <script type="module" src="storage.js"></script>
