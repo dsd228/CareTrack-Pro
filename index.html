@@ -5,55 +5,63 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>CareTrack-Pro</title>
   <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
 </head>
 <body>
+  <!-- Toast notifications for status messages -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <!-- Barra superior -->
   <header class="topbar">
     <div class="logo-title">
+      <button class="hamburger" aria-label="Abrir menú" tabindex="0">&#9776;</button>
       <img src="assets/logo.svg" alt="CareTrack-Pro Logo" class="logo" />
       <span class="title">CareTrack-Pro</span>
     </div>
-    <input type="search" id="searchPaciente" placeholder="Buscar paciente..." aria-label="Buscar paciente" />
+    <input type="search" id="searchPaciente" placeholder="Buscar paciente..." aria-label="Buscar paciente" autocomplete="off" list="autocomplete-list" />
+    <datalist id="autocomplete-list"></datalist>
     <div class="header-actions">
-      <button id="themeToggle" title="Cambiar tema"></button>
+      <button id="themeToggle" title="Cambiar tema" aria-label="Cambiar tema"></button>
+      <button id="langToggle" title="Cambiar idioma" aria-label="Cambiar idioma">ES</button>
+      <div class="user-state" title="Estado del usuario">
+        <img src="assets/doctor.jpg" alt="Foto médico" class="doctor-photo" />
+        <span class="doctor-name">Dra. Martínez</span>
+      </div>
     </div>
   </header>
-  <div class="dashboard-layout">
-    <!-- Menú lateral con íconos SVG de la web -->
-    <nav class="sidebar" aria-label="Menú principal">
-      <button class="menu-btn active" data-tab="paciente">
-        <img src="assets/user.svg" alt="" class="icon" /> <span>Paciente</span>
-      </button>
-      <button class="menu-btn" data-tab="historia">
-        <img src="assets/history.svg" alt="" class="icon" /> <span>Historia Clínica</span>
-      </button>
-      <button class="menu-btn" data-tab="signos">
-        <img src="assets/vitals.svg" alt="" class="icon" /> <span>Signos Vitales</span>
-      </button>
-      <button class="menu-btn" data-tab="examenes">
-        <img src="assets/lab.svg" alt="" class="icon" /> <span>Exámenes</span>
-      </button>
-      <button class="menu-btn" data-tab="alergias">
-        <img src="assets/allergy.svg" alt="" class="icon" /> <span>Alergias</span>
-      </button>
-      <button class="menu-btn" data-tab="notas">
-        <img src="assets/notes.svg" alt="" class="icon" /> <span>Notas</span>
-      </button>
-      <button class="menu-btn" data-tab="educacion">
-        <img src="assets/education.svg" alt="" class="icon" /> <span>Educación</span>
-      </button>
-      <button class="menu-btn" data-tab="configuracion">
-        <img src="assets/settings.svg" alt="" class="icon" /> <span>Configuración</span>
-      </button>
-    </nav>
-    <main id="main-content">
-      <!-- Panel SPA (JS) -->
-    </main>
-  </div>
+  <aside class="sidebar" aria-label="Menú principal" tabindex="0">
+    <button class="menu-btn active" data-tab="paciente" aria-label="Paciente">
+      <img src="assets/user.svg" alt="" class="icon" /><span class="menu-text">Paciente</span>
+    </button>
+    <button class="menu-btn" data-tab="historia" aria-label="Historia Clínica">
+      <img src="assets/history.svg" alt="" class="icon" /><span class="menu-text">Historia Clínica</span>
+    </button>
+    <button class="menu-btn" data-tab="signos" aria-label="Signos Vitales">
+      <img src="assets/vitals.svg" alt="" class="icon" /><span class="menu-text">Signos Vitales</span>
+    </button>
+    <button class="menu-btn" data-tab="examenes" aria-label="Exámenes">
+      <img src="assets/lab.svg" alt="" class="icon" /><span class="menu-text">Exámenes</span>
+    </button>
+    <button class="menu-btn" data-tab="alergias" aria-label="Alergias">
+      <img src="assets/allergy.svg" alt="" class="icon" /><span class="menu-text">Alergias</span>
+    </button>
+    <button class="menu-btn" data-tab="notas" aria-label="Notas">
+      <img src="assets/notes.svg" alt="" class="icon" /><span class="menu-text">Notas</span>
+    </button>
+    <button class="menu-btn" data-tab="educacion" aria-label="Educación">
+      <img src="assets/education.svg" alt="" class="icon" /><span class="menu-text">Educación</span>
+    </button>
+    <button class="menu-btn" data-tab="configuracion" aria-label="Configuración">
+      <img src="assets/settings.svg" alt="" class="icon" /><span class="menu-text">Configuración</span>
+    </button>
+  </aside>
+  <main id="main-content" tabindex="0" aria-label="Contenido principal SPA">
+    <!-- Panel SPA (JS) -->
+  </main>
   <footer>
-    <small>CareTrack-Pro &copy; 2025 · GitHub Pages Ready</small>
+    <small>CareTrack-Pro &copy; 2025 · GitHub Pages Ready · <a href="https://github.com/dsd228/CareTrack-Pro">Repositorio</a></small>
   </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-5JXyNw+fXr2H8JXKk8cJ2mUOa5uA5ZzCkLw2V5WwR0L3oY2vV3sJdR8n8F5TnF6iX8D8ZbQ+XjO+XjO+XjO+XjO+XjO+XjO+XjO+" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="script.js"></script>
 </body>
 </html>
