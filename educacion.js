@@ -1,4 +1,3 @@
-Sí, David, se cortó antes de terminar el código. Te paso el educacion.js completo ya finalizado, incluyendo pestañas, tarjetas, búsqueda y fallback local:
 
 import { db } from './firebase.js';
 import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
