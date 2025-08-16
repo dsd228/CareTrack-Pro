@@ -9,11 +9,24 @@
   --color-gray: #f4f7fa;      /* Fondo paneles */
 }
 
+/* Dark theme variables */
+body.dark-theme {
+  --color-primary: #64B5F6;   /* Azul más claro para el tema oscuro */
+  --color-dark: #90CAF9;      /* Azul claro para títulos */
+  --color-accent: #81C784;    /* Verde más claro */
+  --color-danger: #EF5350;    /* Rojo más claro */
+  --color-bg: #121212;        /* Fondo oscuro */
+  --color-border: #424242;    /* Bordes oscuros */
+  --color-text: #E0E0E0;      /* Texto claro */
+  --color-gray: #1E1E1E;      /* Fondo paneles oscuro */
+}
+
 body {
   font-family: 'Inter', 'Roboto', Arial, sans-serif;
   background: var(--color-bg);
   margin: 0;
   color: var(--color-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .topbar {
@@ -234,4 +247,231 @@ footer {
   .sidebar { width: 44px; }
   #main-content { margin-left: 44px; padding: 1rem .3rem 0 .3rem; }
   .spa-panel, .paciente-panel { gap: 1.2rem; }
+}
+
+/* Education Module Styles */
+.edu-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  font-weight: 500;
+  color: var(--color-text);
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  background: var(--color-gray);
+  border-bottom-color: var(--color-accent);
+}
+
+.tab-btn.active {
+  border-bottom-color: var(--color-primary);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.edu-search {
+  margin-bottom: 1.5rem;
+}
+
+.edu-search input {
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.edu-actions-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: flex-start;
+}
+
+.edu-actions-bar button {
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  border: none;
+  background: var(--color-accent);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.edu-actions-bar button:hover {
+  background: var(--color-primary);
+}
+
+.edu-content {
+  min-height: 300px;
+  margin-bottom: 2rem;
+}
+
+.edu-card {
+  background: var(--color-gray);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.edu-card:hover {
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
+  transform: translateY(-2px);
+}
+
+.edu-card h3 {
+  color: var(--color-dark);
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.edu-card p {
+  margin-bottom: 0.8rem;
+  line-height: 1.6;
+}
+
+.edu-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.edu-actions button {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-border);
+  background: white;
+  color: var(--color-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+body.dark-theme .edu-actions button {
+  background: var(--color-gray);
+  color: var(--color-primary);
+  border-color: var(--color-border);
+}
+
+.edu-actions button:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+.edu-notes {
+  border-top: 2px solid var(--color-border);
+  padding-top: 2rem;
+}
+
+.edu-notes h3 {
+  color: var(--color-dark);
+  margin-bottom: 1rem;
+}
+
+.edu-notes textarea {
+  width: 100%;
+  min-height: 120px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1rem;
+  font-family: inherit;
+  font-size: 1rem;
+  background: var(--color-gray);
+  color: var(--color-text);
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.edu-notes textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--color-bg);
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  font-size: 2rem;
+  cursor: pointer;
+  color: var(--color-text);
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.modal-close:hover {
+  opacity: 1;
+}
+
+/* Dark theme adjustments for other components */
+body.dark-theme .topbar {
+  background: var(--color-dark);
+  box-shadow: 0 2px 16px rgba(100, 181, 246, 0.15);
+}
+
+body.dark-theme .sidebar {
+  background: var(--color-gray);
+  box-shadow: 2px 0 10px rgba(100, 181, 246, 0.08);
+}
+
+body.dark-theme .spa-panel,
+body.dark-theme .paciente-panel {
+  background: var(--color-gray);
+  border-color: var(--color-border);
+}
+
+body.dark-theme .form-row input,
+body.dark-theme .form-row textarea,
+body.dark-theme .form-row select {
+  background: var(--color-bg);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+body.dark-theme .toast {
+  background: var(--color-accent);
+}
+
+body.dark-theme .toast.info {
+  background: var(--color-primary);
+}
+
+body.dark-theme .toast.error {
+  background: var(--color-danger);
 }

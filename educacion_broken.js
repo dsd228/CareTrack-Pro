@@ -4,69 +4,6 @@ import { showToast } from './toast.js';
 
 console.log('Loading educacion.js module');
 
-// Mock Firebase functions and data for demonstration
-const mockData = {
-  enfermedades: [
-    { id: '1', nombre: 'Diabetes', descripcion: 'Enfermedad metabólica crónica', sintomas: 'Sed excesiva, fatiga, visión borrosa', prevencion: 'Dieta saludable, ejercicio regular', tratamiento: 'Insulina, medicamentos orales' },
-    { id: '2', nombre: 'Hipertensión', descripcion: 'Presión arterial elevada', sintomas: 'Dolor de cabeza, mareos, palpitaciones', prevencion: 'Ejercicio, dieta baja en sal, control de peso', tratamiento: 'Antihipertensivos, cambios de estilo de vida' }
-  ],
-  medicamentos: [
-    { id: '1', nombre: 'Ibuprofeno', principioActivo: 'Ibuprofeno', dosis: '400mg cada 8 horas', efectosSecundarios: 'Dolor estomacal, náuseas', contraindicaciones: 'Úlceras gástricas activas, alergia al medicamento' },
-    { id: '2', nombre: 'Paracetamol', principioActivo: 'Acetaminofén', dosis: '500mg cada 6 horas', efectosSecundarios: 'Raros en dosis normales', contraindicaciones: 'Enfermedad hepática severa' }
-  ],
-  protocolos_enfermeria: [
-    { id: '1', nombre: 'RCP Básico', objetivo: 'Restablecer circulación y respiración', procedimiento: 'Compresiones torácicas 30:2', precauciones: 'Verificar respuesta del paciente', referencias: 'Guías AHA 2020' },
-    { id: '2', nombre: 'Administración de medicamentos', objetivo: 'Administrar medicación de forma segura', procedimiento: 'Verificar 5 correctos', precauciones: 'Comprobar alergias', referencias: 'Protocolo institucional' }
-  ],
-  videos_tutoriales: [
-    { id: '1', titulo: 'Técnica de inyección intramuscular', url: 'https://example.com/video1', categoria: 'Procedimientos' },
-    { id: '2', titulo: 'Toma de signos vitales', url: 'https://example.com/video2', categoria: 'Evaluación' }
-  ]
-};
-
-// Mock Firestore functions
-const getMockCollection = (collectionName) => mockData[collectionName] || [];
-
-const safeCollection = (name) => ({ mockCollection: name });
-
-const safeGetDocs = async (col) => {
-  const collectionName = col.mockCollection || 'enfermedades';
-  const data = getMockCollection(collectionName);
-  return {
-    docs: data.map(item => ({
-      id: item.id,
-      data: () => item
-    }))
-  };
-};
-
-const safeDoc = (collectionName, id) => ({ mockCollection: collectionName, mockId: id });
-
-const safeGetDoc = async (docRef) => {
-  const { mockCollection, mockId } = docRef;
-  const data = getMockCollection(mockCollection);
-  const item = data.find(d => d.id === mockId);
-  return {
-    exists: () => !!item,
-    data: () => item || {}
-  };
-};
-
-const safeSetDoc = async (docRef, data) => {
-  console.log('Mock setDoc:', docRef, data);
-  return Promise.resolve();
-};
-
-const safeDeleteDoc = async (docRef) => {
-  console.log('Mock deleteDoc:', docRef);
-  return Promise.resolve();
-};
-
-const safeAddDoc = async (col, data) => {
-  console.log('Mock addDoc:', col, data);
-  return Promise.resolve();
-};
-
 // HTML structure for the education panel
 export function panelEducacion() {
   return `
@@ -132,14 +69,11 @@ export function panelEducacion() {
 
 // Main render function called by main.js
 export function renderEducacion(container) {
-  console.log('renderEducacion called with container:', container);
   container.innerHTML = panelEducacion();
   panelEducacionInit();
 }
 
 export function panelEducacionInit() {
-  console.log('panelEducacionInit called');
-  
   const busqueda = document.getElementById('educacion_busqueda');
   const buscarBtn = document.getElementById('educacion_buscar');
   const content = document.getElementById('educacion-content');
@@ -154,13 +88,6 @@ export function panelEducacionInit() {
   const ytModalContent = document.getElementById('youtube-modal-content');
   const ytModalCloseBtn = document.getElementById('youtube-modal-close');
   let activeTab = "enfermedades";
-
-  console.log('Elements found:', {
-    busqueda: !!busqueda,
-    buscarBtn: !!buscarBtn,
-    content: !!content,
-    tabs: tabs.length
-  });
 
   // Tabs
   tabs.forEach(tab => {
@@ -259,8 +186,6 @@ export function panelEducacionInit() {
   }
 
   function renderTab(tabName, items){
-    console.log('renderTab called with:', tabName, items.length, 'items');
-    
     if(items.length === 0){
       content.innerHTML = '<p>No hay información disponible.</p>';
       return;
@@ -418,8 +343,26 @@ export function panelEducacionInit() {
   }
 
   // =====================
+  // NHS + traducción
+  // =====================
+  async function buscarNHS(term){
+    // Mock NHS search for demonstration
+    return {
+      name: term,
+      summary: `Información médica sobre ${term}`,
+      symptoms: `Síntomas comunes de ${term}`,
+      prevention: `Prevención de ${term}`,
+      treatment: `Tratamiento para ${term}`
+    };
+  }
+
+  async function traducirAlEspañol(texto){
+    // Mock translation for demonstration
+    return texto; // In real implementation, would use translation API
+  }
+
+  // =====================
   // Inicial carga
   // =====================
-  console.log('Loading initial tab data for:', activeTab);
   loadTabData(activeTab);
 }

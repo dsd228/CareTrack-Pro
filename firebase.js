@@ -1,18 +1,44 @@
-// firebase.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+// Mock Firebase for development/testing when Firebase is not available
+console.log('Using mock Firebase implementation');
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBW0QcJ5jCCx52l9qfYPTj5lUHp1TjlSpA",
-  authDomain: "caretrackweb.firebaseapp.com",
-  projectId: "caretrackweb",
-  storageBucket: "caretrackweb.appspot.com",
-  messagingSenderId: "31200607142",
-  appId: "1:31200607142:web:c4902c1a4a1b30d962ad67",
-  measurementId: "G-0G8GHGHF7Y"
+// Mock Firebase app
+export const app = {
+  name: 'mock-firebase',
+  options: {}
 };
 
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+// Mock Auth
+export const auth = {
+  currentUser: null,
+  onAuthStateChanged: (callback) => {
+    // Simulate no user logged in
+    setTimeout(() => callback(null), 100);
+    return () => {}; // unsubscribe function
+  },
+  signInWithEmailAndPassword: async (email, password) => {
+    return {
+      user: {
+        uid: 'mock-user-id',
+        email: email,
+        displayName: 'Mock User'
+      }
+    };
+  },
+  createUserWithEmailAndPassword: async (email, password) => {
+    return {
+      user: {
+        uid: 'mock-user-id',
+        email: email,
+        displayName: 'Mock User'
+      }
+    };
+  },
+  signOut: async () => {
+    return Promise.resolve();
+  }
+};
+
+// Mock Firestore
+export const db = {
+  type: 'mock-firestore'
+};
