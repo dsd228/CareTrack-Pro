@@ -7,6 +7,21 @@
   --color-border: #c6d4e7;    /* Bordes suaves */
   --color-text: #222c3a;      /* Texto principal */
   --color-gray: #f4f7fa;      /* Fondo paneles */
+  
+  /* Proper rgba color tokens for transparency */
+  --color-primary-12: rgba(25, 118, 210, 0.12);
+  --color-primary-22: rgba(25, 118, 210, 0.22);
+  --color-primary-33: rgba(25, 118, 210, 0.33);
+  
+  /* Dark theme variables */
+  --dark-color-primary: #42A5F5;
+  --dark-color-dark: #1E88E5;
+  --dark-color-accent: #66BB6A;
+  --dark-color-danger: #EF5350;
+  --dark-color-bg: #121212;
+  --dark-color-border: #404040;
+  --dark-color-text: #E0E0E0;
+  --dark-color-gray: #1E1E1E;
 }
 
 body {
@@ -79,7 +94,7 @@ body {
   background: var(--color-gray);
   color: var(--color-primary);
   font-weight: 600;
-  box-shadow: 0 2px 8px var(--color-primary)12;
+  box-shadow: 0 2px 8px var(--color-primary-12);
 }
 
 #main-content {
@@ -146,7 +161,7 @@ body {
 .form-row textarea:focus,
 .form-row select:focus {
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 2px var(--color-primary)22;
+  box-shadow: 0 0 0 2px var(--color-primary-22);
 }
 .form-row input.invalid,
 .form-row textarea.invalid {
@@ -167,7 +182,7 @@ body {
   color: #fff;
   font-weight: 600;
   font-size: 1.08rem;
-  box-shadow: 0 3px 12px var(--color-primary)22;
+  box-shadow: 0 3px 12px var(--color-primary-22);
   cursor: pointer;
   transition: background 0.2s, box-shadow 0.2s;
   display: flex;
@@ -176,7 +191,7 @@ body {
 }
 .form-actions button:hover {
   background: var(--color-accent);
-  box-shadow: 0 2px 16px var(--color-primary)33;
+  box-shadow: 0 2px 16px var(--color-primary-33);
 }
 .toast {
   position: fixed;
@@ -234,4 +249,48 @@ footer {
   .sidebar { width: 44px; }
   #main-content { margin-left: 44px; padding: 1rem .3rem 0 .3rem; }
   .spa-panel, .paciente-panel { gap: 1.2rem; }
+}
+
+/* Dark theme support */
+.dark-theme {
+  --color-primary: var(--dark-color-primary);
+  --color-dark: var(--dark-color-dark);
+  --color-accent: var(--dark-color-accent);
+  --color-danger: var(--dark-color-danger);
+  --color-bg: var(--dark-color-bg);
+  --color-border: var(--dark-color-border);
+  --color-text: var(--dark-color-text);
+  --color-gray: var(--dark-color-gray);
+}
+
+.dark-theme .sidebar {
+  background: #1E1E1E;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.dark-theme .spa-panel,
+.dark-theme .paciente-panel {
+  background: #1E1E1E;
+  border-color: var(--color-border);
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.5);
+}
+
+.dark-theme .form-row input,
+.dark-theme .form-row textarea,
+.dark-theme .form-row select {
+  background: #2A2A2A;
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.dark-theme .form-row input:focus,
+.dark-theme .form-row textarea:focus,
+.dark-theme .form-row select:focus {
+  background: #333;
+}
+
+.dark-theme footer {
+  background: #1E1E1E;
+  color: #888;
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.3);
 }

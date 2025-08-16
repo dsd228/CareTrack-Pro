@@ -12,16 +12,55 @@ import * as loginModule from './login.js';
 import * as registroModule from './registro.js';
 
 import { showToast } from './toast.js';
-import { checkAuthState } from './auth.js';
+import { subscribeAuth } from './auth.js';
+
+// App state
+let isInitialized = false;
 
 // Selección de elementos
 const sidebarBtns = document.querySelectorAll('.menu-btn');
 const mainContent = document.getElementById('main-content');
 const doctorNameEl = document.getElementById('doctorName');
 const logoutBtn = document.getElementById('logoutBtn');
+const themeToggle = document.getElementById('themeToggle');
+const langToggle = document.getElementById('langToggle');
+
+// Preferences management
+const preferences = {
+  get theme() {
+    return localStorage.getItem('caretrack-theme') || 'light';
+  },
+  set theme(value) {
+    localStorage.setItem('caretrack-theme', value);
+  },
+  get language() {
+    return localStorage.getItem('caretrack-language') || 'ES';
+  },
+  set language(value) {
+    localStorage.setItem('caretrack-language', value);
+  }
+};
+
+// Initialize theme from localStorage
+function initializeTheme() {
+  const savedTheme = preferences.theme;
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark-theme');
+  }
+}
+
+// Initialize language from localStorage  
+function initializeLanguage() {
+  const savedLang = preferences.language;
+  if (langToggle) {
+    langToggle.textContent = savedLang;
+  }
+}
 
 // Función para cargar contenido
 function loadTab(tab) {
+  if (!mainContent) return;
+  
   mainContent.innerHTML = ''; // limpiar contenido
   switch (tab) {
     case 'paciente': pacienteModule.renderPaciente(mainContent); break;
@@ -40,51 +79,89 @@ function loadTab(tab) {
   }
 }
 
-// Manejar clics en la barra lateral
-sidebarBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    sidebarBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    loadTab(btn.dataset.tab);
+// Initialize event listeners with guards
+function initializeEventListeners() {
+  // Guard against multiple initialization
+  if (isInitialized) return;
+
+  // Manejar clics en la barra lateral
+  sidebarBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      sidebarBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      loadTab(btn.dataset.tab);
+    });
   });
-});
 
-// Tema
-document.getElementById('themeToggle').addEventListener('click', () => {
-  document.body.classList.toggle('dark-theme');
-  showToast('Tema cambiado', 'info');
-});
-
-// Idioma
-document.getElementById('langToggle').addEventListener('click', () => {
-  const current = document.getElementById('langToggle').textContent;
-  document.getElementById('langToggle').textContent = current === 'ES' ? 'EN' : 'ES';
-  showToast(`Idioma cambiado a ${document.getElementById('langToggle').textContent}`, 'info');
-});
-
-// Logout
-logoutBtn.addEventListener('click', async () => {
-  try {
-    await checkAuthState('logout');
-    showToast('Sesión cerrada', 'info');
-    loadTab('login');
-  } catch (err) {
-    showToast('Error al cerrar sesión', 'error');
-    console.error(err);
+  // Tema with persistence
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const isDark = document.body.classList.toggle('dark-theme');
+      preferences.theme = isDark ? 'dark' : 'light';
+      showToast(`Tema cambiado a ${isDark ? 'oscuro' : 'claro'}`, 'info');
+    });
   }
-});
+
+  // Idioma with persistence
+  if (langToggle) {
+    langToggle.addEventListener('click', () => {
+      const current = langToggle.textContent;
+      const newLang = current === 'ES' ? 'EN' : 'ES';
+      langToggle.textContent = newLang;
+      preferences.language = newLang;
+      showToast(`Idioma cambiado a ${newLang}`, 'info');
+    });
+  }
+
+  // Logout
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        const { logout } = await import('./auth.js');
+        await logout();
+        showToast('Sesión cerrada', 'info');
+        loadTab('login');
+      } catch (err) {
+        showToast('Error al cerrar sesión', 'error');
+        console.error(err);
+      }
+    });
+  }
+
+  isInitialized = true;
+}
 
 // Inicialización
 function init() {
-  loadTab('paciente'); // pestaña por defecto
-  checkAuthState('check').then(user => {
-    if (user) {
+  // Initialize preferences from localStorage
+  initializeTheme();
+  initializeLanguage();
+  
+  // Initialize event listeners
+  initializeEventListeners();
+  
+  // Load default tab
+  loadTab('paciente');
+  
+  // Setup auth state listener
+  subscribeAuth((user, role) => {
+    if (user && doctorNameEl) {
       doctorNameEl.textContent = user.displayName || 'Doctor';
-      logoutBtn.style.display = 'inline-block';
+      if (logoutBtn) {
+        logoutBtn.style.display = 'inline-block';
+      }
     } else {
       loadTab('login');
+      if (logoutBtn) {
+        logoutBtn.style.display = 'none';
+      }
     }
   });
 }
 
-window.addEventListener('DOMContentLoaded', init);
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}

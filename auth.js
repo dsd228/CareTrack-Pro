@@ -46,3 +46,12 @@ export async function register(email, pass, name, role="medico") {
 export function getRole() {
   return currentRole;
 }
+
+// Backward compatibility function
+export function checkAuthState(action) {
+  if (action === 'logout') {
+    return logout();
+  }
+  // For 'check' action, return current user
+  return Promise.resolve(currentUser);
+}
