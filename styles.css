@@ -225,10 +225,98 @@ footer {
   box-shadow: 0 -1px 4px rgba(25, 118, 210, 0.04);
   margin-top: 2rem;
 }
+
+/* Estilos para el módulo de educación */
+.edu-card {
+  background: #fff;
+  border: 1.5px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.06);
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.edu-card:hover {
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.12);
+  border-color: var(--color-primary);
+}
+
+.edu-card.externa {
+  background: linear-gradient(135deg, #f8fbff 0%, #e3f2fd 100%);
+  border-left: 4px solid var(--color-accent);
+}
+
+.edu-card h3 {
+  color: var(--color-dark);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: 0.5rem;
+}
+
+.edu-card p {
+  margin: 0.8rem 0;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.edu-card p strong {
+  color: var(--color-dark);
+  font-weight: 600;
+}
+
+.fuente-externa {
+  background: var(--color-accent);
+  color: #fff;
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.edu-actions {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.edu-actions button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.edu-actions button:hover {
+  background: var(--color-dark);
+  transform: translateY(-1px);
+}
+
+.edu-actions button:last-child {
+  background: var(--color-danger);
+}
+
+.edu-actions button:last-child:hover {
+  background: #b71c1c;
+}
+
 @media (max-width: 900px) {
   .sidebar { width: 56px; }
   #main-content { margin-left: 56px; }
   .spa-panel, .paciente-panel { padding: .8rem .3rem; }
+  .edu-card { padding: 1rem; }
+  .edu-actions { flex-direction: column; }
 }
 @media (max-width: 600px) {
   .sidebar { width: 44px; }

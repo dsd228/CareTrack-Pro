@@ -1,6 +1,81 @@
 import { db } from './firebase.js';
 import { collection, getDocs, doc, getDoc, setDoc, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 import { showToast } from './toast.js';
+import { buscarMedicamento, buscarNHS, traducirAlEspañol } from './api.js';
+
+/**
+ * Renderiza la interfaz del módulo de educación
+ * @param {HTMLElement} mainContent - Contenedor principal donde se renderiza
+ */
+export function renderEducacion(mainContent) {
+  mainContent.innerHTML = `
+    <div class="spa-panel">
+      <h2>🎓 Educación y Búsqueda de Información Médica</h2>
+      
+      <!-- Búsqueda -->
+      <div class="form-row">
+        <label>Buscar enfermedad o medicamento:
+          <input type="search" id="educacion_busqueda" placeholder="Ej: diabetes, ibuprofeno, hipertensión..." />
+        </label>
+        <button type="button" id="educacion_buscar" style="padding: 0.8rem 1.5rem; background: var(--color-primary); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">🔍 Buscar</button>
+      </div>
+
+      <!-- Tabs de contenido -->
+      <div style="display: flex; gap: 1rem; margin: 1.5rem 0; border-bottom: 2px solid var(--color-border);">
+        <button class="tab-btn active" data-tab="enfermedades" style="padding: 0.8rem 1.2rem; border: none; background: none; border-bottom: 3px solid var(--color-primary); color: var(--color-primary); font-weight: 600; cursor: pointer;">🏥 Enfermedades</button>
+        <button class="tab-btn" data-tab="medicamentos" style="padding: 0.8rem 1.2rem; border: none; background: none; border-bottom: 3px solid transparent; color: var(--color-text); font-weight: 600; cursor: pointer;">💊 Medicamentos</button>
+        <button class="tab-btn" data-tab="protocolos" style="padding: 0.8rem 1.2rem; border: none; background: none; border-bottom: 3px solid transparent; color: var(--color-text); font-weight: 600; cursor: pointer;">📋 Protocolos</button>
+        <button class="tab-btn" data-tab="videos" style="padding: 0.8rem 1.2rem; border: none; background: none; border-bottom: 3px solid transparent; color: var(--color-text); font-weight: 600; cursor: pointer;">🎥 Videos</button>
+      </div>
+
+      <!-- Botones de acción -->
+      <div style="display: flex; gap: 1rem; margin: 1rem 0;">
+        <button id="educacion_agregar" style="padding: 0.6rem 1.2rem; background: var(--color-accent); color: #fff; border: none; border-radius: 6px; font-weight: 500; cursor: pointer;">➕ Agregar</button>
+        <button id="educacion_youtube" style="padding: 0.6rem 1.2rem; background: #ff0000; color: #fff; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; display: none;">📺 YouTube</button>
+      </div>
+
+      <!-- Contenido de tabs -->
+      <div id="educacion-content">
+        <p>Selecciona una categoría y busca información médica. Los resultados incluirán datos de OpenFDA, NHS y fuentes locales.</p>
+      </div>
+
+      <!-- Notas personalizadas -->
+      <div style="margin-top: 2rem; padding: 1.5rem; background: var(--color-gray); border-radius: 10px; border: 1px solid var(--color-border);">
+        <h3>📝 Notas Personalizadas de Educación</h3>
+        <textarea id="educacion_texto" rows="4" style="width: 100%; padding: 0.8rem; border: 1px solid var(--color-border); border-radius: 6px; resize: vertical;" placeholder="Agrega tus notas y observaciones sobre educación médica..."></textarea>
+        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+          <button id="educacion_guardar" style="padding: 0.6rem 1.2rem; background: var(--color-primary); color: #fff; border: none; border-radius: 6px; font-weight: 500; cursor: pointer;">💾 Guardar</button>
+          <button id="educacion_cargar" style="padding: 0.6rem 1.2rem; background: var(--color-accent); color: #fff; border: none; border-radius: 6px; font-weight: 500; cursor: pointer;">📂 Cargar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para agregar/editar -->
+    <div id="edu-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000;">
+      <div style="background: #fff; padding: 2rem; border-radius: 10px; max-width: 600px; width: 90%; max-height: 80%; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3>Agregar/Editar Contenido</h3>
+          <button id="edu-modal-close" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+        </div>
+        <div id="edu-modal-content"></div>
+      </div>
+    </div>
+
+    <!-- Modal para YouTube -->
+    <div id="youtube-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000;">
+      <div style="background: #fff; padding: 2rem; border-radius: 10px; max-width: 800px; width: 90%; max-height: 80%; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3>Buscar Videos Educativos</h3>
+          <button id="youtube-modal-close" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+        </div>
+        <div id="youtube-modal-content"></div>
+      </div>
+    </div>
+  `;
+  
+  // Inicializar funcionalidad después de renderizar
+  panelEducacionInit();
+}
 
 export function panelEducacionInit() {
   const busqueda = document.getElementById('educacion_busqueda');
@@ -70,32 +145,77 @@ export function panelEducacionInit() {
     const colName = getColName(tabName);
     if(!colName) return;
 
-    // Firebase
+    content.innerHTML = '<p>Buscando en múltiples fuentes...</p>';
+
+    // Firebase - datos locales
     const snapshot = await getDocs(collection(db, colName));
     let items = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))
                              .filter(i => Object.values(i).some(
                                  v => typeof v === 'string' && v.toLowerCase().includes(term)
                              ));
 
-    // NHS
-    let nhsItems = [];
-    if(tabName === 'enfermedades' || tabName === 'medicamentos'){
+    // Búsqueda en APIs externas y combinación de resultados
+    let externalItems = [];
+    
+    if(tabName === 'enfermedades') {
+      // Buscar en NHS para enfermedades
       const nhsData = await buscarNHS(term);
       if(nhsData) {
         const nombre = await traducirAlEspañol(nhsData.name || term);
         const resumen = await traducirAlEspañol(nhsData.summary || 'N/D');
-        nhsItems.push({
+        externalItems.push({
+          id: `nhs_${term}`,
           nombre,
           descripcion: resumen,
           sintomas: nhsData.symptoms ? await traducirAlEspañol(nhsData.symptoms) : 'N/D',
           prevencion: nhsData.prevention ? await traducirAlEspañol(nhsData.prevention) : 'N/D',
           tratamiento: nhsData.treatment ? await traducirAlEspañol(nhsData.treatment) : 'N/D',
-          fuente: 'NHS'
+          fuente: 'NHS API',
+          esExterno: true
+        });
+      }
+    }
+    
+    if(tabName === 'medicamentos') {
+      // Buscar en OpenFDA para medicamentos
+      const fdaData = await buscarMedicamento(term);
+      if(fdaData) {
+        const nombre = fdaData.openfda?.brand_name?.[0] || fdaData.openfda?.generic_name?.[0] || term;
+        const principioActivo = fdaData.openfda?.substance_name?.join(', ') || 'N/D';
+        const fabricante = fdaData.openfda?.manufacturer_name?.[0] || 'N/D';
+        
+        externalItems.push({
+          id: `fda_${term}`,
+          nombre: await traducirAlEspañol(nombre),
+          principioActivo: await traducirAlEspañol(principioActivo),
+          dosis: fdaData.dosage_and_administration ? await traducirAlEspañol(fdaData.dosage_and_administration[0]) : 'N/D',
+          efectosSecundarios: fdaData.adverse_reactions ? await traducirAlEspañol(fdaData.adverse_reactions[0]) : 'N/D',
+          contraindicaciones: fdaData.contraindications ? await traducirAlEspañol(fdaData.contraindications[0]) : 'N/D',
+          fabricante: await traducirAlEspañol(fabricante),
+          fuente: 'OpenFDA',
+          esExterno: true
+        });
+      }
+
+      // También buscar en NHS para medicamentos (información adicional)
+      const nhsData = await buscarNHS(term);
+      if(nhsData) {
+        const nombre = await traducirAlEspañol(nhsData.name || term);
+        externalItems.push({
+          id: `nhs_med_${term}`,
+          nombre,
+          principioActivo: 'Ver descripción',
+          dosis: 'Consultar con profesional de salud',
+          efectosSecundarios: nhsData.symptoms ? await traducirAlEspañol(nhsData.symptoms) : 'N/D',
+          contraindicaciones: 'Consultar información médica',
+          descripcion: nhsData.summary ? await traducirAlEspañol(nhsData.summary) : 'N/D',
+          fuente: 'NHS API',
+          esExterno: true
         });
       }
     }
 
-    renderTab(tabName, [...items, ...nhsItems]);
+    renderTab(tabName, [...items, ...externalItems]);
   }
 
   // =====================
@@ -118,61 +238,61 @@ export function panelEducacionInit() {
 
   function renderTab(tabName, items){
     if(items.length === 0){
-      content.innerHTML = '<p>No hay información disponible.</p>';
+      content.innerHTML = '<p>No hay información disponible. Intenta con otro término de búsqueda.</p>';
       return;
     }
     const html = items.map(item => {
+      // Identificar si es resultado externo para mostrar fuente
+      const fuenteIndicator = item.esExterno ? `<div class="fuente-externa">📡 ${item.fuente}</div>` : '';
+      const actionButtons = item.esExterno ? '' : `
+        <div class="edu-actions">
+          <button onclick="window.eduVerDetalle('${tabName}','${item.id}')">Ver más</button>
+          <button onclick="window.eduEditar('${tabName}','${item.id}')">Editar</button>
+          <button onclick="window.eduEliminar('${tabName}','${item.id}')">Eliminar</button>
+        </div>`;
+
       if(tabName === 'enfermedades'){
-        return `<div class="edu-card">
+        return `<div class="edu-card ${item.esExterno ? 'externa' : ''}">
+          ${fuenteIndicator}
           <h3>${item.nombre}</h3>
           <p><strong>Descripción:</strong> ${item.descripcion || 'N/D'}</p>
           <p><strong>Síntomas:</strong> ${item.sintomas || 'N/D'}</p>
           <p><strong>Prevención:</strong> ${item.prevencion || 'N/D'}</p>
           <p><strong>Tratamiento:</strong> ${item.tratamiento || 'N/D'}</p>
-          <div class="edu-actions">
-            <button onclick="window.eduVerDetalle('${tabName}','${item.id}')">Ver más</button>
-            <button onclick="window.eduEditar('${tabName}','${item.id}')">Editar</button>
-            <button onclick="window.eduEliminar('${tabName}','${item.id}')">Eliminar</button>
-          </div>
+          ${actionButtons}
         </div>`;
       }
       if(tabName === 'medicamentos'){
-        return `<div class="edu-card">
+        return `<div class="edu-card ${item.esExterno ? 'externa' : ''}">
+          ${fuenteIndicator}
           <h3>${item.nombre}</h3>
           <p><strong>Principio activo:</strong> ${item.principioActivo || 'N/D'}</p>
           <p><strong>Dosis:</strong> ${item.dosis || 'N/D'}</p>
           <p><strong>Efectos secundarios:</strong> ${item.efectosSecundarios || 'N/D'}</p>
           <p><strong>Contraindicaciones:</strong> ${item.contraindicaciones || 'N/D'}</p>
-          <div class="edu-actions">
-            <button onclick="window.eduVerDetalle('${tabName}','${item.id}')">Ver más</button>
-            <button onclick="window.eduEditar('${tabName}','${item.id}')">Editar</button>
-            <button onclick="window.eduEliminar('${tabName}','${item.id}')">Eliminar</button>
-          </div>
+          ${item.fabricante ? `<p><strong>Fabricante:</strong> ${item.fabricante}</p>` : ''}
+          ${item.descripcion ? `<p><strong>Información adicional:</strong> ${item.descripcion}</p>` : ''}
+          ${actionButtons}
         </div>`;
       }
       if(tabName === 'protocolos'){
-        return `<div class="edu-card">
+        return `<div class="edu-card ${item.esExterno ? 'externa' : ''}">
+          ${fuenteIndicator}
           <h3>${item.nombre}</h3>
           <p><strong>Objetivo:</strong> ${item.objetivo || 'N/D'}</p>
           <p><strong>Procedimiento:</strong> ${item.procedimiento || 'N/D'}</p>
           <p><strong>Precauciones:</strong> ${item.precauciones || 'N/D'}</p>
           <p><strong>Referencias:</strong> ${item.referencias || 'N/D'}</p>
-          <div class="edu-actions">
-            <button onclick="window.eduVerDetalle('${tabName}','${item.id}')">Ver más</button>
-            <button onclick="window.eduEditar('${tabName}','${item.id}')">Editar</button>
-            <button onclick="window.eduEliminar('${tabName}','${item.id}')">Eliminar</button>
-          </div>
+          ${actionButtons}
         </div>`;
       }
       if(tabName === 'videos'){
-        return `<div class="edu-card">
+        return `<div class="edu-card ${item.esExterno ? 'externa' : ''}">
+          ${fuenteIndicator}
           <h3>${item.titulo}</h3>
           <p><strong>Categoría:</strong> ${item.categoria || 'N/D'}</p>
           <a href="${item.url}" target="_blank" style="color:#1976d2;">Ver video</a>
-          <div class="edu-actions">
-            <button onclick="window.eduEditar('${tabName}','${item.id}')">Editar</button>
-            <button onclick="window.eduEliminar('${tabName}','${item.id}')">Eliminar</button>
-          </div>
+          ${actionButtons}
         </div>`;
       }
     }).join('');
@@ -269,17 +389,35 @@ export function panelEducacionInit() {
   }
 
   // =====================
-  // NHS + traducción
+  // API Configuration and Extensions Documentation
   // =====================
-  async function buscarNHS(term){
-    const apiKey='cb536e23-13a3-478b-ac7e-ce39112447da';
-    const url=`https://api.nhs.uk/conditions/${encodeURIComponent(term)}`;
-    try{const res=await fetch(url,{headers:{'Content-Type':'application/json','apikey':apiKey}}); if(!res.ok) return null; return await res.json();}catch(e){console.error("Error NHS:",e); return null;}
-  }
-
-  async function traducirAlEspañol(texto){
-    try{const res=await fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(texto)+'&langpair=en|es'); const data=await res.json(); return data.responseData.translatedText||texto;}catch(e){console.error("Error traduciendo:",e); return texto;}
-  }
+  
+  /*
+   * CONFIGURACIÓN DE APIs Y EXTENSIBILIDAD
+   * 
+   * Para agregar nuevas APIs o modificar las existentes:
+   * 
+   * 1. CLAVES API:
+   *    - OpenFDA: Modificar OPENFDA_API_KEY en api.js
+   *    - NHS: Modificar NHS_API_KEY en api.js
+   *    - LibreTranslate: Puede requerir instancia propia para producción
+   * 
+   * 2. AGREGAR NUEVA API:
+   *    - Crear función en api.js siguiendo el patrón existente
+   *    - Importar función en este archivo
+   *    - Agregar lógica de búsqueda en searchTerm()
+   *    - Actualizar renderTab() para mostrar nuevos campos
+   * 
+   * 3. EXTENDER FUNCIONALIDAD:
+   *    - Para nuevos tipos de contenido: agregar en getColName()
+   *    - Para nuevos campos: actualizar showFormModal()
+   *    - Para nueva traducción: modificar traducirAlEspañol() en api.js
+   * 
+   * 4. EJEMPLOS DE EXTENSIÓN:
+   *    - PubMed API para artículos científicos
+   *    - DrugBank para información detallada de medicamentos
+   *    - ICD-10 API para códigos de diagnóstico
+   */
 
   // =====================
   // Inicial carga
