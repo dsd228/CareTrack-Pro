@@ -1,31 +1,23 @@
 // Integración con APIs externas (OpenFDA, MedlinePlus, Wikipedia)
 export async function buscarMedicamento(term) {
   try {
-    // Mock data for testing - would normally fetch from OpenFDA
-    console.log('Mock OpenFDA search for:', term);
-    return {
-      brand_name: [`Mock Medicine for ${term}`],
-      generic_name: [`Generic ${term}`],
-      description: [`Mock description for ${term}`],
-      purpose: [`Mock purpose for ${term}`],
-      dosage_and_administration: [`Mock dosage for ${term}`],
-      contraindications: [`Mock contraindications for ${term}`],
-      active_ingredient: [`Mock active ingredient for ${term}`],
-      adverse_reactions: [`Mock side effects for ${term}`]
-    };
+    const res = await fetch(`https://api.fda.gov/drug/label.json?search=${encodeURIComponent(term)}`);
+    const data = await res.json();
+    if (data.results && data.results.length) {
+      return data.results[0];
+    }
+    return null;
   } catch {
     return null;
   }
 }
 
 export async function buscarWiki(term, lang="es") {
+  const url = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(term)}`;
   try {
-    // Mock data for testing - would normally fetch from Wikipedia
-    console.log('Mock Wikipedia search for:', term, 'in', lang);
-    return {
-      title: `Mock Wikipedia: ${term}`,
-      extract: `This is mock Wikipedia content for ${term}. In a real implementation, this would fetch from Wikipedia API.`
-    };
+    const res = await fetch(url);
+    const data = await res.json();
+    return data;
   } catch {
     return null;
   }

@@ -1,13 +1,5 @@
-import { db } from './firebase-mock.js';
-// Mock Firebase functions for testing
-const collection = (db, name) => ({ name });
-const getDocs = async (collection) => ({ docs: [] });
-const doc = (db, collection, id) => ({ collection, id });
-const getDoc = async (docRef) => ({ exists: () => false, data: () => ({}) });
-const setDoc = async (docRef, data) => console.log('Mock setDoc:', docRef, data);
-const deleteDoc = async (docRef) => console.log('Mock deleteDoc:', docRef);
-const addDoc = async (collection, data) => console.log('Mock addDoc:', collection, data);
-
+import { db } from './firebase.js';
+import { collection, getDocs, doc, getDoc, setDoc, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 import { showToast } from './toast.js';
 import { buscarMedicamento, buscarWiki } from './api.js';
 
@@ -422,15 +414,32 @@ export function panelEducacionInit() {
 
   async function buscarVideosYT(query){
     try {
-      // YouTube API Key would need to be configured properly
-      // For now, return mock data or show appropriate message
-      showToast('YouTube API requiere configuración de clave API', 'warning');
-      return [
-        {
-          titulo: `Tutorial: ${query} (Demo)`,
-          url: `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`
-        }
-      ];
+      // YouTube API would require a valid API key
+      // For production, replace 'YOUR_YOUTUBE_API_KEY' with actual key
+      const apiKey = "YOUR_YOUTUBE_API_KEY";
+      
+      if (apiKey === "YOUR_YOUTUBE_API_KEY") {
+        // Development/demo mode - provide helpful links
+        showToast('YouTube API requiere configuración de clave API válida', 'warning');
+        return [
+          {
+            titulo: `Videos educativos: ${query}`,
+            url: `https://www.youtube.com/results?search_query=${encodeURIComponent(query + ' educativo médico')}`
+          },
+          {
+            titulo: `Tutorial médico: ${query}`,
+            url: `https://www.youtube.com/results?search_query=${encodeURIComponent(query + ' tutorial medicina')}`
+          }
+        ];
+      }
+      
+      // Production mode with actual API
+      const res = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&key=${apiKey}&type=video&maxResults=5`);
+      const data = await res.json();
+      return data.items?.map(i => ({
+        titulo: i.snippet.title,
+        url: `https://www.youtube.com/watch?v=${i.id.videoId}`
+      })) || [];
     } catch(e) {
       console.error("Error YouTube", e);
       return [];
@@ -450,11 +459,35 @@ export function panelEducacionInit() {
     if (!texto || typeof texto !== 'string') return texto;
     
     try {
-      // Try LibreTranslate first (would need proper setup)
-      // For now, use MyMemory as the primary translation service
+      // Try LibreTranslate first (configure URL for your instance)
+      const libreTranslateUrl = 'https://libretranslate.de/translate'; // Public instance
+      
+      const libreResponse = await fetch(libreTranslateUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          q: texto,
+          source: 'en',
+          target: 'es',
+          format: 'text'
+        })
+      });
+      
+      if (libreResponse.ok) {
+        const libreData = await libreResponse.json();
+        return libreData.translatedText || texto;
+      }
+    } catch(e) {
+      console.warn("LibreTranslate no disponible, usando MyMemory como respaldo:", e);
+    }
+    
+    try {
+      // Fallback to MyMemory API
       const res = await fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(texto) + '&langpair=en|es');
       const data = await res.json();
-      return data.responseData.translatedText || texto;
+      return data.responseData?.translatedText || texto;
     } catch(e) {
       console.error("Error traduciendo:", e);
       return texto;
