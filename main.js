@@ -1,6 +1,18 @@
-// main.js
-import { showToast } from './toast.js'; // Para notificaciones
-import { checkAuthState } from './auth.js'; // Control de sesión
+// Importar todos los módulos al inicio
+import * as pacienteModule from './paciente.js';
+import * as historiaModule from './historia.js';
+import * as signosModule from './signos.js';
+import * as examenesModule from './examenes.js';
+import * as alergiasModule from './alergias.js';
+import * as notasModule from './notas.js';
+import * as educacionModule from './educacion.js';
+import * as configuracionModule from './configuracion.js';
+import * as adminModule from './admin.js';
+import * as loginModule from './login.js';
+import * as registroModule from './registro.js';
+
+import { showToast } from './toast.js';
+import { checkAuthState } from './auth.js';
 
 // Selección de elementos
 const sidebarBtns = document.querySelectorAll('.menu-btn');
@@ -8,50 +20,27 @@ const mainContent = document.getElementById('main-content');
 const doctorNameEl = document.getElementById('doctorName');
 const logoutBtn = document.getElementById('logoutBtn');
 
-// Función para cargar contenido según tab
+// Función para cargar contenido
 function loadTab(tab) {
-  mainContent.innerHTML = ''; // Limpiar contenido
-
+  mainContent.innerHTML = ''; // limpiar contenido
   switch (tab) {
-    case 'paciente':
-      import('./paciente.js').then(module => module.renderPaciente(mainContent));
-      break;
-    case 'historia':
-      import('./historia.js').then(module => module.renderHistoria(mainContent));
-      break;
-    case 'signos':
-      import('./signos.js').then(module => module.renderSignos(mainContent));
-      break;
-    case 'examenes':
-      import('./examenes.js').then(module => module.renderExamenes(mainContent));
-      break;
-    case 'alergias':
-      import('./alergias.js').then(module => module.renderAlergias(mainContent));
-      break;
-    case 'notas':
-      import('./notas.js').then(module => module.renderNotas(mainContent));
-      break;
-    case 'educacion':
-      import('./educacion.js').then(module => module.renderEducacion(mainContent));
-      break;
-    case 'configuracion':
-      import('./configuracion.js').then(module => module.renderConfiguracion(mainContent));
-      break;
-    case 'admin':
-      import('./admin.js').then(module => module.renderAdmin(mainContent));
-      break;
-    case 'login':
-      import('./login.js').then(module => module.renderLogin(mainContent));
-      break;
-    case 'registro':
-      import('./registro.js').then(module => module.renderRegistro(mainContent));
-      break;
+    case 'paciente': pacienteModule.renderPaciente(mainContent); break;
+    case 'historia': historiaModule.renderHistoria(mainContent); break;
+    case 'signos': signosModule.renderSignos(mainContent); break;
+    case 'examenes': examenesModule.renderExamenes(mainContent); break;
+    case 'alergias': alergiasModule.renderAlergias(mainContent); break;
+    case 'notas': notasModule.renderNotas(mainContent); break;
+    case 'educacion': educacionModule.renderEducacion(mainContent); break;
+    case 'configuracion': configuracionModule.renderConfiguracion(mainContent); break;
+    case 'admin': adminModule.renderAdmin(mainContent); break;
+    case 'login': loginModule.renderLogin(mainContent); break;
+    case 'registro': registroModule.renderRegistro(mainContent); break;
     default:
-      mainContent.innerHTML = `<p>Sección no encontrada.</p>`;
+      mainContent.innerHTML = '<p>Sección no encontrada</p>';
   }
 }
 
-// Manejar clic en la barra lateral
+// Manejar clics en la barra lateral
 sidebarBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     sidebarBtns.forEach(b => b.classList.remove('active'));
@@ -60,25 +49,23 @@ sidebarBtns.forEach(btn => {
   });
 });
 
-// Cambiar tema
-const themeToggle = document.getElementById('themeToggle');
-themeToggle.addEventListener('click', () => {
+// Tema
+document.getElementById('themeToggle').addEventListener('click', () => {
   document.body.classList.toggle('dark-theme');
   showToast('Tema cambiado', 'info');
 });
 
-// Cambiar idioma (solo ejemplo)
-const langToggle = document.getElementById('langToggle');
-langToggle.addEventListener('click', () => {
-  const current = langToggle.textContent;
-  langToggle.textContent = current === 'ES' ? 'EN' : 'ES';
-  showToast(`Idioma cambiado a ${langToggle.textContent}`, 'info');
+// Idioma
+document.getElementById('langToggle').addEventListener('click', () => {
+  const current = document.getElementById('langToggle').textContent;
+  document.getElementById('langToggle').textContent = current === 'ES' ? 'EN' : 'ES';
+  showToast(`Idioma cambiado a ${document.getElementById('langToggle').textContent}`, 'info');
 });
 
 // Logout
 logoutBtn.addEventListener('click', async () => {
   try {
-    await checkAuthState('logout'); // Función en auth.js
+    await checkAuthState('logout');
     showToast('Sesión cerrada', 'info');
     loadTab('login');
   } catch (err) {
@@ -89,7 +76,7 @@ logoutBtn.addEventListener('click', async () => {
 
 // Inicialización
 function init() {
-  loadTab('paciente'); // Abrir tab por defecto
+  loadTab('paciente'); // pestaña por defecto
   checkAuthState('check').then(user => {
     if (user) {
       doctorNameEl.textContent = user.displayName || 'Doctor';
@@ -100,5 +87,4 @@ function init() {
   });
 }
 
-// Ejecutar init al cargar
 window.addEventListener('DOMContentLoaded', init);
