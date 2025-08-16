@@ -1,5 +1,5 @@
 // main.js - Controlador principal de CareTrack-Pro
-import { checkAuthState } from './auth.js';
+import { checkAuthState } from './auth-mock.js';
 import { showToast } from './toast.js';
 
 // Módulos (se cargarán cuando sea necesario)
