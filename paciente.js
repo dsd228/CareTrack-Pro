@@ -1,3 +1,4 @@
+// paciente.js
 import { db } from './firebase.js';
 import { getRole } from './auth.js';
 import { savePacienteField, loadPacienteData, clearPacienteData } from './storage.js';
@@ -46,7 +47,11 @@ export function panelPacienteInit() {
   const cargarBtn = document.getElementById('paciente_cargar');
   const limpiarBtn = document.getElementById('paciente_limpiar');
 
-  // Debounce para guardado automático local
+  if (!nombre || !email || !edad || !otros || !guardarBtn || !cargarBtn || !limpiarBtn) {
+    console.warn("Formulario de paciente no encontrado en el DOM");
+    return;
+  }
+
   let debounceTimer = null;
   function debounceSave(field, value) {
     clearTimeout(debounceTimer);
@@ -76,7 +81,7 @@ export function panelPacienteInit() {
     }
   }
   function validateEdad() {
-    if (!/^\d+$/.test(edad.value.trim())) {
+    if (edad.value.trim() && !/^\d+$/.test(edad.value.trim())) {
       edad.classList.add('invalid');
       return false;
     } else {
@@ -84,28 +89,28 @@ export function panelPacienteInit() {
       return true;
     }
   }
-  nombre.addEventListener('input', e => {
+
+  nombre.addEventListener('input', () => {
     validateNombre();
     debounceSave('nombre', nombre.value);
   });
-  email.addEventListener('input', e => {
+  email.addEventListener('input', () => {
     validateEmail();
     debounceSave('email', email.value);
   });
-  edad.addEventListener('input', e => {
+  edad.addEventListener('input', () => {
     validateEdad();
     debounceSave('edad', edad.value);
   });
-  otros.addEventListener('input', e => {
+  otros.addEventListener('input', () => {
     debounceSave('otros', otros.value);
   });
 
-  // Recuperar datos al recargar el panel
   const data = loadPacienteData();
-  nombre.value = data.nombre;
-  email.value = data.email;
-  edad.value = data.edad;
-  otros.value = data.otros;
+  nombre.value = data.nombre || '';
+  email.value = data.email || '';
+  edad.value = data.edad || '';
+  otros.value = data.otros || '';
   validateNombre();
   validateEmail();
   validateEdad();
@@ -128,27 +133,42 @@ export function panelPacienteInit() {
       showToast('Corrige los campos', 'info');
       return;
     }
-    // Guardar en Firebase (Firestore, colección pacientes, id por email)
-    await setDoc(doc(db, "pacientes", email.value), {
-      nombre: nombre.value,
-      edad: edad.value,
-      email: email.value,
-      otros: otros.value,
-      updated: new Date().toISOString()
-    });
-    showToast('Guardado en Firebase');
+    try {
+      await setDoc(doc(db, "pacientes", email.value), {
+        nombre: nombre.value,
+        edad: edad.value,
+        email: email.value,
+        otros: otros.value,
+        updated: new Date().toISOString()
+      });
+      showToast('Guardado en Firebase');
+    } catch (err) {
+      console.error("Error al guardar en Firebase:", err);
+      showToast('Error al guardar', 'error');
+    }
   };
 
   cargarBtn.onclick = async () => {
-    const docSnap = await getDoc(doc(db, "pacientes", email.value));
-    if (docSnap.exists()) {
-      const d = docSnap.data();
-      nombre.value = d.nombre || "";
-      edad.value = d.edad || "";
-      otros.value = d.otros || "";
-      showToast('Datos cargados de Firebase');
-    } else {
-      showToast('No se encontró en Firebase', 'info');
+    try {
+      const docSnap = await getDoc(doc(db, "pacientes", email.value));
+      if (docSnap.exists()) {
+        const d = docSnap.data();
+        nombre.value = d.nombre || "";
+        edad.value = d.edad || "";
+        otros.value = d.otros || "";
+        showToast('Datos cargados de Firebase');
+      } else {
+        showToast('No se encontró en Firebase', 'info');
+      }
+    } catch (err) {
+      console.error("Error al cargar de Firebase:", err);
+      showToast('Error al cargar', 'error');
     }
   };
+}
+
+// ✅ Esta función es la que usa main.js
+export function renderPaciente(container) {
+  container.innerHTML = panelPaciente();
+  panelPacienteInit();
 }
