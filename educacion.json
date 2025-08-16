@@ -1,0 +1,32 @@
+[
+  {
+    "nombre": "Ibuprofeno",
+    "tipo": "Medicamento",
+    "descripcion": "Antiinflamatorio no esteroideo utilizado para el dolor y la fiebre. No se recomienda en ciertos problemas gástricos o renales."
+  },
+  {
+    "nombre": "Paracetamol",
+    "tipo": "Medicamento",
+    "descripcion": "Analgesico y antipirético comúnmente utilizado para el dolor leve a moderado y la fiebre."
+  },
+  {
+    "nombre": "Fiebre",
+    "tipo": "Síntoma",
+    "descripcion": "Elevación de la temperatura corporal generalmente por infección o inflamación. Vigilar en niños y ancianos."
+  },
+  {
+    "nombre": "Hipertensión",
+    "tipo": "Enfermedad",
+    "descripcion": "Presión arterial elevada de manera crónica. Requiere control médico y cambios en el estilo de vida."
+  },
+  {
+    "nombre": "Asma",
+    "tipo": "Enfermedad",
+    "descripcion": "Enfermedad crónica que afecta las vías respiratorias, causando dificultad para respirar y tos."
+  },
+  {
+    "nombre": "Dolor de cabeza",
+    "tipo": "Síntoma",
+    "descripcion": "Puede tener diversas causas. Si es persistente o muy intenso, consultar a un especialista."
+  }
+]
