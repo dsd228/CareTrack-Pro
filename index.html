@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CareTrack-Pro · Clínica Central</title>
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -12,8 +12,8 @@
   <header class="topbar">
     <div class="logo-title">
       <button class="hamburger" aria-label="Abrir menú">&#9776;</button>
-      <!-- Logo SVG institucional, editable -->
       <span class="logo">
+        <!-- SVG Logo -->
         <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
           <circle cx="20" cy="20" r="18" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/>
           <rect x="10" y="17" width="20" height="6" rx="2.5" fill="#1976D2"/>
@@ -35,56 +35,30 @@
       <button id="logoutBtn" style="display:none;">Salir</button>
     </div>
   </header>
+
   <aside class="sidebar" aria-label="Menú principal">
-    <button class="menu-btn active" data-tab="paciente">
-      <svg width="20" height="20" fill="currentColor"><circle cx="10" cy="10" r="8" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/><path d="M10 12c-3 0-5 1.5-5 3v2h10v-2c0-1.5-2-3-5-3zm0-2a2 2 0 100-4 2 2 0 000 4z" fill="#1976D2"/></svg>
-      Paciente
-    </button>
-    <button class="menu-btn" data-tab="historia">
-      <svg width="20" height="20" fill="currentColor"><rect x="3" y="3" width="14" height="14" rx="3" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/><path d="M6 8h8M6 12h5" stroke="#1976D2" stroke-width="2"/></svg>
-      Historia Clínica
-    </button>
-    <button class="menu-btn" data-tab="signos">
-      <svg width="20" height="20" fill="currentColor"><ellipse cx="10" cy="10" rx="8" ry="6" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/><path d="M5 10c1.5-2 3-2 5 0s3.5 2 5 0" stroke="#1976D2" stroke-width="2" fill="none"/></svg>
-      Signos Vitales
-    </button>
-    <button class="menu-btn" data-tab="examenes">
-      <svg width="20" height="20" fill="currentColor"><rect x="4" y="4" width="12" height="12" rx="2" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/><circle cx="10" cy="10" r="3" fill="#1976D2"/></svg>
-      Exámenes
-    </button>
-    <button class="menu-btn" data-tab="alergias">
-      <svg width="20" height="20" fill="currentColor"><circle cx="10" cy="10" r="8" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/><rect x="8" y="8" width="4" height="4" rx="2" fill="#1976D2"/></svg>
-      Alergias
-    </button>
-    <button class="menu-btn" data-tab="notas">
-      <svg width="20" height="20" fill="currentColor"><rect x="3" y="5" width="14" height="10" rx="2" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/><path d="M7 9h6" stroke="#1976D2" stroke-width="2"/></svg>
-      Notas
-    </button>
-    <button class="menu-btn" data-tab="educacion">
-      <svg width="20" height="20" fill="currentColor"><rect x="4" y="7" width="12" height="7" rx="2" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/><rect x="7" y="5" width="6" height="2" rx="1" fill="#1976D2"/></svg>
-      Educación
-    </button>
-    <button class="menu-btn" data-tab="configuracion">
-      <svg width="20" height="20" fill="currentColor"><circle cx="10" cy="10" r="8" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/><path d="M10 7v6M7 10h6" stroke="#1976D2" stroke-width="2"/></svg>
-      Configuración
-    </button>
-    <button class="menu-btn" data-tab="admin">
-      <svg width="20" height="20" fill="currentColor"><rect x="4" y="4" width="12" height="12" rx="4" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/><path d="M10 7v6M7 10h6" stroke="#1976D2" stroke-width="2"/></svg>
-      Admin
-    </button>
-    <button class="menu-btn" data-tab="login">
-      <svg width="20" height="20" fill="currentColor"><circle cx="10" cy="10" r="8" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/><path d="M8 10h4M10 8v4" stroke="#1976D2" stroke-width="2"/></svg>
-      Login
-    </button>
-    <button class="menu-btn" data-tab="registro">
-      <svg width="20" height="20" fill="currentColor"><circle cx="10" cy="10" r="8" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/><path d="M10 13v-6M7 10h6" stroke="#1976D2" stroke-width="2"/></svg>
-      Registro
-    </button>
+    <button class="menu-btn active" data-tab="paciente">Paciente</button>
+    <button class="menu-btn" data-tab="historia">Historia Clínica</button>
+    <button class="menu-btn" data-tab="signos">Signos Vitales</button>
+    <button class="menu-btn" data-tab="examenes">Exámenes</button>
+    <button class="menu-btn" data-tab="alergias">Alergias</button>
+    <button class="menu-btn" data-tab="notas">Notas</button>
+    <button class="menu-btn" data-tab="educacion">Educación</button>
+    <button class="menu-btn" data-tab="configuracion">Configuración</button>
+    <button class="menu-btn" data-tab="admin">Admin</button>
+    <button class="menu-btn" data-tab="login">Login</button>
+    <button class="menu-btn" data-tab="registro">Registro</button>
   </aside>
-  <main id="main-content" tabindex="0" aria-label="Contenido principal SPA"></main>
+
+  <main id="main-content" tabindex="0" aria-label="Contenido principal SPA">
+    <!-- Panel dinámico cargado por JS -->
+  </main>
+
   <footer>
     <small>CareTrack-Pro · Clínica Central &copy; 2025</small>
   </footer>
+
+  <!-- Scripts SPA -->
   <script type="module" src="firebase.js"></script>
   <script type="module" src="auth.js"></script>
   <script type="module" src="main.js"></script>
