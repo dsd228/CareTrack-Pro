@@ -1,4 +1,8 @@
-// main.js - Archivo principal corregido
+// main.js - Controlador principal de CareTrack-Pro
+import { checkAuthState } from './auth.js';
+import { showToast } from './toast.js';
+
+// Módulos (se cargarán cuando sea necesario)
 import * as pacienteModule from './paciente.js';
 import * as historiaModule from './historia.js';
 import * as signosModule from './signos.js';
@@ -11,60 +15,56 @@ import * as adminModule from './admin.js';
 import * as loginModule from './login.js';
 import * as registroModule from './registro.js';
 
-import { showToast } from './toast.js';
-import { checkAuthState } from './auth.js';
-
-// Variables globales (se asignarán cuando el DOM esté listo)
+// Elementos del DOM (se asignarán cuando el DOM esté listo)
 let sidebarBtns, mainContent, doctorNameEl, logoutBtn;
 
-// Función para cargar contenido dinámico
+// Función para cargar una pestaña
 function loadTab(tab) {
   if (!mainContent) return;
-  mainContent.innerHTML = ''; // Limpiar contenido previo
+  mainContent.innerHTML = ''; // Limpiar contenido
 
   try {
     switch (tab) {
-      case 'paciente': pacienteModule.renderPaciente(mainContent); break;
-      case 'historia': historiaModule.renderHistoria(mainContent); break;
-      case 'signos': signosModule.renderSignos(mainContent); break;
-      case 'examenes': examenesModule.renderExamenes(mainContent); break;
-      case 'alergias': alergiasModule.renderAlergias(mainContent); break;
-      case 'notas': notasModule.renderNotas(mainContent); break;
-      case 'educacion': educacionModule.renderEducacion(mainContent); break;
+      case 'paciente':     pacienteModule.renderPaciente(mainContent); break;
+      case 'historia':     historiaModule.renderHistoria(mainContent); break;
+      case 'signos':       signosModule.renderSignos(mainContent); break;
+      case 'examenes':     examenesModule.renderExamenes(mainContent); break;
+      case 'alergias':     alergiasModule.renderAlergias(mainContent); break;
+      case 'notas':        notasModule.renderNotas(mainContent); break;
+      case 'educacion':    educacionModule.renderEducacion(mainContent); break;
       case 'configuracion': configuracionModule.renderConfiguracion(mainContent); break;
-      case 'admin': adminModule.renderAdmin(mainContent); break;
-      case 'login': loginModule.renderLogin(mainContent); break;
-      case 'registro': registroModule.renderRegistro(mainContent); break;
+      case 'admin':        adminModule.renderAdmin(mainContent); break;
+      case 'login':        loginModule.renderLogin(mainContent); break;
+      case 'registro':     registroModule.renderRegistro(mainContent); break;
       default:
-        mainContent.innerHTML = '<p>Sección no encontrada</p>';
+        mainContent.innerHTML = '<p>Sección no encontrada. Revisa los módulos.</p>';
     }
   } catch (error) {
-    console.error(`Error al cargar la pestaña "${tab}":`, error);
-    mainContent.innerHTML = '<p>Error al cargar la sección.</p>';
+    console.error('Error al cargar la pestaña:', tab, error);
+    mainContent.innerHTML = `<p>Error al cargar: ${tab}</p>`;
   }
 }
 
-// Inicialización completa de la app
+// Inicialización de la app
 function init() {
-  // Selección de elementos (ahora segura, después del DOM)
+  // Seleccionar elementos después de que el DOM esté listo
   sidebarBtns = document.querySelectorAll('.menu-btn');
   mainContent = document.getElementById('main-content');
   doctorNameEl = document.getElementById('doctorName');
   logoutBtn = document.getElementById('logoutBtn');
 
-  // Verificar estado de autenticación
+  // Verificar autenticación
   checkAuthState('check')
     .then(user => {
       if (user) {
         doctorNameEl.textContent = user.displayName || 'Doctor';
         logoutBtn.style.display = 'inline-block';
-        loadTab('paciente'); // Cargar pestaña inicial
+        loadTab('paciente'); // Pestaña inicial si hay sesión
       } else {
-        loadTab('login');
+        loadTab('login'); // Si no hay sesión, mostrar login
       }
     })
-    .catch(err => {
-      console.error('Error en autenticación:', err);
+    .catch(() => {
       loadTab('login');
     });
 
@@ -85,11 +85,10 @@ function init() {
 
   // Cambio de idioma
   document.getElementById('langToggle')?.addEventListener('click', () => {
-    const langBtn = document.getElementById('langToggle');
-    const current = langBtn.textContent.trim();
-    langBtn.textContent = current === 'ES' ? 'EN' : 'ES';
-    const langText = langBtn.textContent === 'ES' ? 'Español' : 'English';
-    showToast(`Idioma cambiado a ${langText}`, 'info');
+    const btn = document.getElementById('langToggle');
+    const es = btn.textContent.trim() === 'ES';
+    btn.textContent = es ? 'EN' : 'ES';
+    showToast(`Idioma: ${es ? 'English' : 'Español'}`, 'info');
   });
 
   // Cerrar sesión
@@ -99,22 +98,17 @@ function init() {
       doctorNameEl.textContent = '';
       logoutBtn.style.display = 'none';
       loadTab('login');
-      showToast('Sesión cerrada correctamente', 'info');
+      showToast('Sesión cerrada', 'info');
     } catch (err) {
-      console.error('Error al cerrar sesión:', err);
-      showToast('No se pudo cerrar la sesión', 'error');
+      showToast('Error al cerrar sesión', 'error');
+      console.error(err);
     }
   });
 }
 
-// Esperar a que el DOM esté completamente cargado
-window.addEventListener('DOMContentLoaded', init);
+// Esperar a que el DOM esté listo
+document.addEventListener('DOMContentLoaded', init);
 
-// Manejo básico de errores globales
-window.addEventListener('error', (e) => {
-  console.error('Error no capturado:', e.error);
-});
-
-window.addEventListener('unhandledrejection', (e) => {
-  console.error('Promesa rechazada:', e.reason);
-});
+// Manejo de errores no capturados
+window.addEventListener('error', e => console.error('Error:', e.error));
+window.addEventListener('unhandledrejection', e => console.error('Promesa rechazada:', e.reason));
