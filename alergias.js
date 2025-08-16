@@ -1,5 +1,5 @@
 import { db } from './firebase.js';
-import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { doc, setDoc, getDoc } from "./firebase-mock.js";
 import { showToast } from './toast.js';
 
 export function panelAlergias() {
@@ -32,4 +32,10 @@ export function panelAlergiasInit() {
     text.value = snap.exists() ? snap.data().texto : "";
     showToast('Alergias cargadas');
   };
+}
+
+// ✅ Esta función es la que usa main.js
+export function renderAlergias(container) {
+  container.innerHTML = panelAlergias();
+  panelAlergiasInit();
 }

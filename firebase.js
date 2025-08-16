@@ -1,18 +1,6 @@
-// firebase.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+// firebase.js - Mock version for local development
+// This replaces the external Firebase dependencies with local storage
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBW0QcJ5jCCx52l9qfYPTj5lUHp1TjlSpA",
-  authDomain: "caretrackweb.firebaseapp.com",
-  projectId: "caretrackweb",
-  storageBucket: "caretrackweb.appspot.com",
-  messagingSenderId: "31200607142",
-  appId: "1:31200607142:web:c4902c1a4a1b30d962ad67",
-  measurementId: "G-0G8GHGHF7Y"
-};
-
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const app = { name: 'mock-app' };
+export const auth = { currentUser: null };
+export const db = { name: 'mock-db' };

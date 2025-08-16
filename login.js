@@ -38,3 +38,9 @@ export function panelLoginInit() {
     window.dispatchEvent(new PopStateEvent('popstate', { state:{tab:"registro"} }));
   };
 }
+
+// ✅ Esta función es la que usa main.js
+export function renderLogin(container) {
+  container.innerHTML = panelLogin();
+  panelLoginInit();
+}

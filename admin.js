@@ -6,4 +6,11 @@ export function panelAdmin() {
   </section>
   `;
 }
+
 export function panelAdminInit() { }
+
+// ✅ Esta función es la que usa main.js
+export function renderAdmin(container) {
+  container.innerHTML = panelAdmin();
+  panelAdminInit();
+}

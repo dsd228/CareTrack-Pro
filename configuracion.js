@@ -20,3 +20,9 @@ export function panelConfiguracionInit() {
     document.getElementById('configuracion_tema').value = 'claro';
   };
 }
+
+// ✅ Esta función es la que usa main.js
+export function renderConfiguracion(container) {
+  container.innerHTML = panelConfiguracion();
+  panelConfiguracionInit();
+}

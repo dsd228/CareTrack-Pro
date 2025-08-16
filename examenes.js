@@ -1,5 +1,5 @@
 import { db } from './firebase.js';
-import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { doc, setDoc, getDoc } from "./firebase-mock.js";
 import { showToast } from './toast.js';
 
 export function panelExamenes() {
@@ -32,4 +32,10 @@ export function panelExamenesInit() {
     text.value = snap.exists() ? snap.data().texto : "";
     showToast('Exámenes cargados');
   };
+}
+
+// ✅ Esta función es la que usa main.js
+export function renderExamenes(container) {
+  container.innerHTML = panelExamenes();
+  panelExamenesInit();
 }

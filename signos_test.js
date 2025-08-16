@@ -1,5 +1,4 @@
-import { db } from './firebase.js';
-import { doc, setDoc, getDoc } from "./firebase-mock.js";
+// Simple test version without Firebase dependencies
 import { showToast } from './toast.js';
 
 export function panelSignos() {
@@ -45,7 +44,7 @@ export function panelSignos() {
     <div class="form-row">
       <label for="signos_dolor">
         Dolor<br>
-        <small>Se usa como “quinto signo vital” en evaluaciones clínicas. Escala 0-10.</small>
+        <small>Se usa como "quinto signo vital" en evaluaciones clínicas. Escala 0-10.</small>
       </label>
       <input type="number" min="0" max="10" id="signos_dolor" placeholder="Escala 0-10" />
     </div>
@@ -98,7 +97,8 @@ export function panelSignosInit() {
   const perfusion = document.getElementById('signos_perfusion');
 
   document.getElementById('signos_guardar').onclick = async () => {
-    await setDoc(doc(db, "signos", "principal"), {
+    // Simple local storage for testing
+    const data = {
       temperatura: temp.value,
       fc: fc.value,
       fr: fr.value,
@@ -110,14 +110,19 @@ export function panelSignosInit() {
       talla: talla.value,
       perfusion: perfusion.value,
       updated: new Date().toISOString()
-    });
-    showToast('Signos vitales guardados');
+    };
+    localStorage.setItem('signos_data', JSON.stringify(data));
+    if (typeof showToast === 'function') {
+      showToast('Signos vitales guardados');
+    } else {
+      alert('Signos vitales guardados');
+    }
   };
 
   document.getElementById('signos_cargar').onclick = async () => {
-    const snap = await getDoc(doc(db, "signos", "principal"));
-    if (snap.exists()) {
-      const d = snap.data();
+    const data = localStorage.getItem('signos_data');
+    if (data) {
+      const d = JSON.parse(data);
       temp.value = d.temperatura || "";
       fc.value = d.fc || "";
       fr.value = d.fr || "";
@@ -128,9 +133,17 @@ export function panelSignosInit() {
       peso.value = d.peso || "";
       talla.value = d.talla || "";
       perfusion.value = d.perfusion || "";
-      showToast('Signos vitales cargados');
+      if (typeof showToast === 'function') {
+        showToast('Signos vitales cargados');
+      } else {
+        alert('Signos vitales cargados');
+      }
     } else {
-      showToast('No hay datos guardados', 'info');
+      if (typeof showToast === 'function') {
+        showToast('No hay datos guardados', 'info');
+      } else {
+        alert('No hay datos guardados');
+      }
     }
   };
 }

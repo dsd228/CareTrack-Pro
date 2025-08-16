@@ -3,7 +3,7 @@ import { db } from './firebase.js';
 import { getRole } from './auth.js';
 import { savePacienteField, loadPacienteData, clearPacienteData } from './storage.js';
 import { showToast } from './toast.js';
-import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { doc, setDoc, getDoc } from "./firebase-mock.js";
 
 export function panelPaciente() {
   return `

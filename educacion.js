@@ -1,6 +1,65 @@
 import { db } from './firebase.js';
-import { collection, getDocs, doc, getDoc, setDoc, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { collection, getDocs, doc, getDoc, setDoc, deleteDoc, addDoc } from "./firebase-mock.js";
 import { showToast } from './toast.js';
+
+export function panelEducacion() {
+  return `
+  <section class="spa-panel">
+    <h2>Educación Médica</h2>
+    
+    <!-- Pestañas de navegación -->
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="enfermedades">Enfermedades</button>
+      <button class="tab-btn" data-tab="medicamentos">Medicamentos</button>
+      <button class="tab-btn" data-tab="protocolos">Protocolos</button>
+      <button class="tab-btn" data-tab="videos">Videos</button>
+    </div>
+    
+    <!-- Controles de búsqueda y acciones -->
+    <div class="form-row">
+      <input type="search" id="educacion_busqueda" placeholder="Buscar términos médicos..." />
+      <button id="educacion_buscar">Buscar</button>
+      <button id="educacion_agregar" style="display:inline-block;">Agregar</button>
+      <button id="educacion_youtube" style="display:none;">YouTube</button>
+    </div>
+    
+    <!-- Área de contenido dinámico -->
+    <div id="educacion-content">
+      <p>Selecciona una pestaña para comenzar.</p>
+    </div>
+    
+    <!-- Área de notas personales -->
+    <div class="form-row">
+      <label for="educacion_texto">Notas personales de educación</label>
+      <textarea id="educacion_texto" placeholder="Escribe tus notas personales aquí..."></textarea>
+    </div>
+    <div class="form-actions">
+      <button id="educacion_guardar">Guardar Notas</button>
+      <button id="educacion_cargar">Cargar Notas</button>
+    </div>
+    
+    <!-- Modal para detalles -->
+    <div id="edu-modal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <span id="edu-modal-close" class="close">&times;</span>
+        <div id="edu-modal-content">
+          <!-- Contenido del modal se carga dinámicamente -->
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal para YouTube -->
+    <div id="youtube-modal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <span id="youtube-modal-close" class="close">&times;</span>
+        <div id="youtube-modal-content">
+          <!-- Contenido de YouTube se carga dinámicamente -->
+        </div>
+      </div>
+    </div>
+  </section>
+  `;
+}
 
 export function panelEducacionInit() {
   const busqueda = document.getElementById('educacion_busqueda');
@@ -285,4 +344,10 @@ export function panelEducacionInit() {
   // Inicial carga
   // =====================
   loadTabData(activeTab);
+}
+
+// ✅ Esta función es la que usa main.js
+export function renderEducacion(container) {
+  container.innerHTML = panelEducacion();
+  panelEducacionInit();
 }

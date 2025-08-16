@@ -1,6 +1,6 @@
 import { db } from './firebase.js';
 import { getRole } from './auth.js';
-import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { doc, setDoc, getDoc } from "./firebase-mock.js";
 import { showToast } from './toast.js';
 
 export function panelHistoria() {
@@ -33,4 +33,10 @@ export function panelHistoriaInit() {
     text.value = snap.exists() ? snap.data().resumen : "";
     showToast('Historia cargada');
   };
+}
+
+// ✅ Esta función es la que usa main.js
+export function renderHistoria(container) {
+  container.innerHTML = panelHistoria();
+  panelHistoriaInit();
 }
